@@ -1,18 +1,36 @@
-// LoginScreen.js
-
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from "@react-native-community/netinfo";
+import { useNavigation } from '@react-navigation/native';  // Importa useNavigation aquí
+import handleLogin from './LoginScreenService';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Aquí puedes agregar la lógica de autenticación
-    // Por ejemplo, podrías usar Firebase Authentication o tu propio backend
+  const navigation = useNavigation();  // Mueve useNavigation aquí
 
-    // En este ejemplo, simplemente navegamos a la pantalla de inicio si el login es exitoso
-    navigation.navigate('Home');
+  const handlePostLogin = async () => {
+    // Verifica la conexión a Internet antes de realizar la solicitud
+    const netInfo = await NetInfo.fetch();
+    
+    if (!netInfo.isConnected) {
+      Alert.alert('Sin conexión', 'Por favor, conecta tu dispositivo a Internet.');
+      return;
+    }
+
+    try {
+      const token = await handleLogin({ "username": email, "password": password });
+      
+      if (token) {
+        await AsyncStorage.setItem('token', token);
+        navigation.navigate('MenuScreen');
+      }
+    } catch (error) {
+      console.error('Error en el inicio de sesión:', error.message);
+      // Manejar el error según sea necesario
+    }
   };
 
   return (
@@ -31,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
-      <Button title="Iniciar Sesión" onPress={handleLogin} />
+      <Button title="Iniciar Sesión" onPress={handlePostLogin} />
     </View>
   );
 };

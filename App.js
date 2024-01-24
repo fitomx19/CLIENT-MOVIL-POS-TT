@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginScreen from './screens/Auth/LoginScreen';
+import MenuScreen from './screens/Menu/MenuScreen';
  
 
 const Stack = createStackNavigator();
@@ -14,6 +15,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="MenuScreen" component={MenuScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
