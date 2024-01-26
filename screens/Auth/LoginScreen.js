@@ -13,12 +13,7 @@ const LoginScreen = () => {
 
   const handlePostLogin = async () => {
     // Verifica la conexión a Internet antes de realizar la solicitud
-    const netInfo = await NetInfo.fetch();
-    
-    if (!netInfo.isConnected) {
-      Alert.alert('Sin conexión', 'Por favor, conecta tu dispositivo a Internet.');
-      return;
-    }
+    console.log('Verificando conexión a Internet...');
 
     try {
       const token = await handleLogin({ "username": email, "password": password });

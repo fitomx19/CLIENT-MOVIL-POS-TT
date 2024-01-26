@@ -1,68 +1,82 @@
-import React from 'react'
+import React, { useEffect } from 'react';
+import { Button, Icon, Grid, Row } from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import PedidosList from './components/PedidosList';
+import {
+  SafeAreaView,
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  StatusBar,
+} from 'react-native';
 
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import styles from '../../global.css.js';
 
-import { Ionicons } from '@expo/vector-icons'
 
 const MenuScreen = ({ navigation }) => {
-    return (
-        <View style={styles.container}>
-        <View style={styles.header}>
-            <Text style={styles.title}>Menú</Text>
-        </View>
-        <View style={styles.content}>
-            <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Home')}
-            >
-            <Ionicons name="home-outline" size={24} color="black" />
-            <Text style={styles.buttonText}>Inicio</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Profile')}
-            >
-            <Ionicons name="person-outline" size={24} color="black" />
-            <Text style={styles.buttonText}>Perfil</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Settings')}
-            >
-            <Ionicons name="settings-outline" size={24} color="black" />
-            <Text style={styles.buttonText}>Ajustes</Text>
-            </TouchableOpacity>
-        </View>
-        </View>
-    )
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      navigation.navigate('LoginScreen');
+    } catch (error) {
+      console.error('Error en el cierre de sesión:', error.message);
     }
+  };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        paddingHorizontal: 20,
-    },
-    header: {
-        height: 80,
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 24,
-    },
-    content: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    buttonText: {
-        marginLeft: 10,
-        fontSize: 18,
-    },
-})
+  const handleCheckToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-export default MenuScreen  
+      if (!token) {
+        navigation.navigate('LoginScreen');
+      }
+    } catch (error) {
+      console.error('Error en el inicio de sesión:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    handleCheckToken();
+  }, []);  
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Menú</Text>
+      <FlatList
+        data={[
+          { key: 'Crear pedido', action: () => navigation.navigate('CreateOrderScreen') },
+          { key: 'Administrar Inventario', action: () => navigation.navigate('ManageInventoryScreen') },
+          { key: 'Revisar pedidos', action: () => navigation.navigate('ReviewOrdersScreen') },
+          { key: 'Cerrar sesion', action: handleLogout },
+        ]}
+        numColumns={2}
+        renderItem={({ item }) => (
+          <View style={styles.buttonContainer}>
+            <Button
+              title={item.key}
+              onPress={item.action}
+              buttonStyle={[
+                styles.button,
+                {
+                  backgroundColor: 'forestgreen', // Color verde forestal
+                  width: 150,
+                  height: 75,
+                  margin: 10,
+                },
+              ]}
+            />
+          </View>
+        )}
+        keyExtractor={item => item.key}
+      />
+    </View>
+  );
+};
+
+MenuScreen.navigationOptions = {
+  headerLeft: () => null,
+};
+
+
+export default MenuScreen;
