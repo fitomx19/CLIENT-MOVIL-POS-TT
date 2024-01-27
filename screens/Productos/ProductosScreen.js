@@ -9,6 +9,10 @@ const ProductScreen = ({ navigation }) => {
 
   const [products, setProducts] = useState([]);
 
+  const navigateToProductDetail = (product) => {
+    console.log('Product:', product);
+    navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts() });
+  };
 
   const handleLogout = async () => {
     try {
@@ -36,16 +40,16 @@ const ProductScreen = ({ navigation }) => {
   }, []);
 
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const productsData = await getProducts();
-        setProducts(productsData);
-      } catch (error) {
-        // Handle error
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      const productsData = await getProducts();
+      setProducts(productsData);
+    } catch (error) {
+      // Handle error
+    }
+  };
 
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -55,7 +59,7 @@ const ProductScreen = ({ navigation }) => {
 
     return (
       <View style={styles.productContainer}>
-        <Card containerStyle={styles.cardContainer}>
+         <Card containerStyle={styles.cardContainer} >
           <Image source={productImage} style={styles.productImage} />
           <Text style={styles.productTitle}>{item.nombre}</Text>
           <Text style={styles.productDescription}>{item.descripcion}</Text>
@@ -73,6 +77,11 @@ const ProductScreen = ({ navigation }) => {
             )}
           />
         </Card>
+        <Button
+          title="Ver detalles"
+          onPress={() => navigateToProductDetail(item)}
+          buttonStyle={styles.button}
+        />
       </View>
     );
   };

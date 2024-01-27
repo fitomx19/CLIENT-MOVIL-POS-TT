@@ -28,3 +28,31 @@ export const getProducts = async () => {
     throw error;
   }
 };
+
+
+export const updateStatusProduct = async (product) => {
+  try {
+    // Obtener el token JWT almacenado en AsyncStorage
+    const token = await AsyncStorage.getItem('token');
+
+    // Configurar los encabezados de la solicitud con el token JWT
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    // Realizar la solicitud con los encabezados configurados
+    const response = await fetch(`${BASE_URL}/status/${product._id}`, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(product),
+    });
+
+    const data = await response.json();
+    console.log('Product updated:', data);
+    return data;
+  } catch (error) {
+    console.error('Error updating product:', error);
+    throw error;
+  }
+}

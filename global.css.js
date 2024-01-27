@@ -16,6 +16,15 @@ const styles = StyleSheet.create({
         color: 'green',
       },
 
+      button: {
+        backgroundColor: 'forestgreen', // Color verde forestal
+        marginHorizontal: 40,
+        marginTop: 10,
+        marginBottom: 10,
+        borderRadius: 20,
+
+      },
+
   });
 
 export default styles;
