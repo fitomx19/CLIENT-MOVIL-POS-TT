@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { updateStatusProduct } from './ProductosScreenService';
+import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
+import { updateStatusProduct ,updateProduct } from './ProductosScreenService';
+ 
+import ProductUpdateForm from './components/ProductUpdateForm';
 
 const ProductDetailScreen = ({ route, navigation }) => {
   const { product } = route.params;
@@ -29,17 +31,35 @@ const ProductDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  const handleUpdate = async (updatedData) => {
+    try {
+      // Llama a updateProduct y espera su resultado antes de continuar
+      await updateProduct(product._id, updatedData);
+
+      // Puedes realizar acciones adicionales después de la actualización
+    } catch (error) {
+      console.error('Error al actualizar el producto:', error);
+      // Maneja el error según tus necesidades
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Detalles del Producto</Text>
-      <Text style={styles.detailText}>Nombre: {product.nombre}</Text>
-      <Text style={styles.detailText}>Descripción: {product.descripcion}</Text>
-      <Text style={styles.detailText}>Existencias: {product.existencias}</Text>
-      <Text style={styles.detailText}>Estado: {isActive ? 'Activo' : 'Inactivo'}</Text>
-      <Button title="Actualizar Estado" style={styles.button} onPress={handleUpdateStatus} />
+    <View   style={{ flex: 1 }}>
+      <ScrollView>
+        <Text style={styles.title}>Detalles del Producto</Text>
+        <Text style={styles.detailText}>Nombre: {product.nombre}</Text>
+        <Text style={styles.detailText}>Descripción: {product.descripcion}</Text>
+        <Text style={styles.detailText}>Existencias: {product.existencias}</Text>
+        <Text style={styles.detailText}>Estado: {isActive ? 'Activo' : 'Inactivo'}</Text>
+        <Button title="Actualizar Estado" style={styles.button} onPress={handleUpdateStatus} />
+
+            <ProductUpdateForm product={product} onUpdate={handleUpdate} navigation={navigation} />
+      </ScrollView>
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

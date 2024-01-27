@@ -56,3 +56,30 @@ export const updateStatusProduct = async (product) => {
     throw error;
   }
 }
+
+
+// ...
+
+export const updateProduct = async (productId, updatedData) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+  
+      const response = await fetch(`${BASE_URL}/${productId}`, {
+        method: 'POST',  
+        headers: headers,
+        body: JSON.stringify(updatedData),
+      });
+  
+      const data = await response.json();
+      console.log('Product updated:', data);
+      return data;
+    } catch (error) {
+      console.error('Error updating product:', error);
+      throw error;
+    }
+  };
+  

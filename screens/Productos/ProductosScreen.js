@@ -11,7 +11,7 @@ const ProductScreen = ({ navigation }) => {
 
   const navigateToProductDetail = (product) => {
     console.log('Product:', product);
-    navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts() });
+    navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts()  });
   };
 
   const handleLogout = async () => {
