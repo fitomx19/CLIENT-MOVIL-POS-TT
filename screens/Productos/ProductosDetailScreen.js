@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView ,Pressable } from 'react-native';
 import { updateStatusProduct ,updateProduct } from './ProductosScreenService';
  
 import ProductUpdateForm from './components/ProductUpdateForm';
@@ -44,16 +44,32 @@ const ProductDetailScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View   style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ScrollView>
-        <Text style={styles.title}>Detalles del Producto</Text>
-        <Text style={styles.detailText}>Nombre: {product.nombre}</Text>
-        <Text style={styles.detailText}>Descripción: {product.descripcion}</Text>
-        <Text style={styles.detailText}>Existencias: {product.existencias}</Text>
-        <Text style={styles.detailText}>Estado: {isActive ? 'Activo' : 'Inactivo'}</Text>
-        <Button title="Actualizar Estado" style={styles.button} onPress={handleUpdateStatus} />
+        <View style={styles.container}>
+          <Text style={styles.title}>Detalles del Producto</Text>
+          <Text style={styles.detailText}>Nombre: {product.nombre}</Text>
+          <Text style={styles.detailText}>
+            Descripción: {product.descripcion}
+          </Text>
+          <Text style={styles.detailText}>
+            Existencias: {product.existencias}
+          </Text>
+          <Text style={styles.detailText}>
+            Estado: {isActive ? "Activo" : "Inactivo"}
+          </Text>
+          <View style={styles.center}>
+            <Pressable style={styles.buttongreen} onPress={handleUpdateStatus}>
+              <Text style={styles.textEstado}> Actualizar Estado </Text>
+            </Pressable>
+          </View>
+        </View>
 
-            <ProductUpdateForm product={product} onUpdate={handleUpdate} navigation={navigation} />
+        <ProductUpdateForm
+          product={product}
+          onUpdate={handleUpdate}
+          navigation={navigation}
+        />
       </ScrollView>
     </View>
   );
@@ -62,6 +78,11 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
 
 const styles = StyleSheet.create({
+  center:{
+    
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -76,10 +97,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
   },
-  button: {
-    backgroundColor: 'forestgreen',
-    marginTop: 16,
+  buttongreen: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+     
+    width: "50%",
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'green',
+    marginBottom: 16,
   },
+  textEstado: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+  
 });
 
 export default ProductDetailScreen;

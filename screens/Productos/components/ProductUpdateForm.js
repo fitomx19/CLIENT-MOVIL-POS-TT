@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Switch, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Switch, TextInput, Pressable , StyleSheet, Alert } from 'react-native';
 
 const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
   const [updatedProduct, setUpdatedProduct] = useState({
@@ -33,12 +33,17 @@ const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
       />
 
       <Text style={styles.label}>Nuevo Precio:</Text>
-      <TextInput
-        style={styles.input}
-        value={updatedProduct.precio.toString() || '0'}
-        keyboardType="numeric"
-        onChangeText={(text) => setUpdatedProduct({ ...updatedProduct, precio: text })}
-      />
+      {
+      updatedProduct.variantes && updatedProduct.variantes.length > 0 ? (
+        <TextInput
+          style={styles.input}
+          value={updatedProduct.precio.toString() || '0'}
+          keyboardType="numeric"
+          onChangeText={(text) => setUpdatedProduct({ ...updatedProduct, precio: text })}
+        />
+      ) : null
+    }
+
 
       <Text style={styles.label}>Nueva Descripción:</Text>
       <TextInput
@@ -75,58 +80,64 @@ const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
         value={updatedProduct.perecedero}
       />
 
-      {/* Add a section for handling variants */}
       <Text style={styles.label}>Variantes:</Text>
-      {updatedProduct.variantes.map((variante, index) => (
-        <View key={index}>
-          <Text style={styles.label}>Nombre:</Text>
-          <TextInput
-            style={styles.input}
-            value={variante.nombre}
-            onChangeText={(text) =>
-              setUpdatedProduct((prevState) => ({
-                ...prevState,
-                variantes: prevState.variantes.map((v, i) => (i === index ? { ...v, nombre: text } : v)),
-              }))
-            }
-          />
-          <Text style={styles.label}>Precio:</Text>
-          <TextInput
-            style={styles.input}
-            value={variante.precio.toString()}
-            keyboardType="numeric"
-            onChangeText={(text) =>
-              setUpdatedProduct((prevState) => ({
-                ...prevState,
-                variantes: prevState.variantes.map((v, i) => (i === index ? { ...v, precio: text } : v)),
-              }))
-            }
-          />
-          <Text style={styles.label}>Existencias:</Text>
-          <TextInput
-            style={styles.input}
-            value={variante.existencias.toString()}
-            keyboardType="numeric"
-            onChangeText={(text) =>
-              setUpdatedProduct((prevState) => ({
-                ...prevState,
-                variantes: prevState.variantes.map((v, i) => (i === index ? { ...v, existencias: text } : v)),
-              }))
-            }
-          />
-        </View>
-      ))}
-      {/* Add a button to add a new variant */}
-      <Button
-        title="Agregar Variante"
+      <View style={styles.variantContainer}>
+        {updatedProduct.variantes.map((variante, index) => (
+          <View key={index} style={styles.variantSection}>
+            <Text style={styles.label}>Variante {index + 1}</Text>
+            <Text style={styles.label}>Nombre:</Text>
+            <TextInput
+              style={styles.input}
+              value={variante.nombre}
+              onChangeText={(text) =>
+                setUpdatedProduct((prevState) => ({
+                  ...prevState,
+                  variantes: prevState.variantes.map((v, i) => (i === index ? { ...v, nombre: text } : v)),
+                }))
+              }
+            />
+            <Text style={styles.label}>Precio:</Text>
+            <TextInput
+              style={styles.input}
+              value={variante.precio.toString()}
+              keyboardType="numeric"
+              onChangeText={(text) =>
+                setUpdatedProduct((prevState) => ({
+                  ...prevState,
+                  variantes: prevState.variantes.map((v, i) => (i === index ? { ...v, precio: text } : v)),
+                }))
+              }
+            />
+            <Text style={styles.label}>Existencias:</Text>
+            <TextInput
+              style={styles.input}
+              value={variante.existencias.toString()}
+              keyboardType="numeric"
+              onChangeText={(text) =>
+                setUpdatedProduct((prevState) => ({
+                  ...prevState,
+                  variantes: prevState.variantes.map((v, i) => (i === index ? { ...v, existencias: text } : v)),
+                }))
+              }
+            />
+          </View>
+        ))}
+      </View>
+
+      <Pressable 
+        style = {styles.buttongreen}
         onPress={() =>
           setUpdatedProduct((prevState) => ({
             ...prevState,
             variantes: [...prevState.variantes, { nombre: '', precio: '', existencias: '' }],
           }))
         }
-      />
-      <Button title="Actualizar" onPress={handleUpdate} />
+      >
+      <Text style = {styles.text} >Agregar Variante</Text>
+      </Pressable>
+      <Pressable  style = {styles.buttonyellow} onPress={handleUpdate}>
+        <Text style = {styles.text} >Actualizar</Text>
+      </Pressable>
     </View>
   );
 };
@@ -147,6 +158,45 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 8,
   },
+  variantContainer: {
+    marginBottom: 16,
+  },
+  variantSection: {
+    marginBottom: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  buttonyellow: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'orange',
+    marginBottom: 16,
+    marginTop: 16,
+  },
+  buttongreen: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'green',
+    marginBottom: 16,
+    marginTop: 16,
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
+  },
+   
 });
 
 export default ProductUpdateForm;

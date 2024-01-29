@@ -83,3 +83,28 @@ export const updateProduct = async (productId, updatedData) => {
     }
   };
   
+
+export const createProduct = async (product) => {
+
+  try{
+    const token = await AsyncStorage.getItem('token');
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(`${BASE_URL}/`, {
+      method: 'POST',  
+      headers: headers,
+      body: JSON.stringify(product),
+    });
+
+    const data = await response.json();
+    console.log('Product creat4ed:', data);
+    return data;
+
+  }catch(error){
+    console.error('Error creating product:', error);
+    throw error;
+  }
+}

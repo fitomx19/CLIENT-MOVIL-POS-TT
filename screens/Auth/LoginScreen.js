@@ -13,8 +13,7 @@ const LoginScreen = () => {
 
   const handlePostLogin = async () => {
     // Verifica la conexión a Internet antes de realizar la solicitud
-    console.log('Verificando conexión a Internet...');
-
+   
     try {
       const token = await handleLogin({ "username": email, "password": password });
       
@@ -24,7 +23,6 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.error('Error en el inicio de sesión:', error.message);
-      // Manejar el error según sea necesario
     }
   };
 

@@ -1,9 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usuarios } from '../../enviroment';
-import { useNavigation } from '@react-navigation/native';
 
 const handleLogin = async (data) => {
   let url = usuarios + 'login';
+  console.log(url);
   let raw = JSON.stringify(data);
   console.log(raw); 
 

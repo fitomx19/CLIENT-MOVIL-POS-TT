@@ -47,7 +47,9 @@ const MenuScreen = ({ navigation }) => {
         data={[
           { key: 'Crear pedido', action: () => navigation.navigate('CreateOrderScreen') },
           { key: 'Administrar Inventario', action: () => navigation.navigate('ProductScreen') },
+          { key: 'Crear producto | Categoría', action: () => navigation.navigate('ProductosAddScreen') },
           { key: 'Revisar pedidos', action: () => navigation.navigate('ReviewOrdersScreen') },
+          { key: 'Corte de Caja', action: () => navigation.navigate('ProductScreen') },
           { key: 'Cerrar sesion', action: handleLogout },
         ]}
         numColumns={2}
