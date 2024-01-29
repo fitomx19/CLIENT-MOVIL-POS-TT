@@ -25,6 +25,15 @@ const styles = StyleSheet.create({
 
       },
 
+      button2: {
+        backgroundColor: 'orange', // Color verde forestal
+        marginHorizontal: 40,
+        marginTop: 10,
+        marginBottom: 10,
+        borderRadius: 20,
+
+      },
+
   });
 
 export default styles;

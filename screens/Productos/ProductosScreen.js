@@ -8,20 +8,14 @@ import { Card, ListItem ,Button} from 'react-native-elements';
 const ProductScreen = ({ navigation }) => {
 
   const [products, setProducts] = useState([]);
+  const [sortOrder, setSortOrder] = useState('asc');  
 
   const navigateToProductDetail = (product) => {
     console.log('Product:', product);
     navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts()  });
   };
 
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem('token');
-      navigation.navigate('LoginScreen');
-    } catch (error) {
-      console.error('Error en el cierre de sesión:', error.message);
-    }
-  };
+ 
 
   const handleCheckToken = async () => {
     try {
@@ -42,11 +36,31 @@ const ProductScreen = ({ navigation }) => {
 
   const fetchProducts = async () => {
     try {
-      const productsData = await getProducts();
+      let productsData = await getProducts();
+
+      // Sort products based on the current sort order
+      productsData = productsData.sort((a, b) => {
+        const nameA = a.nombre.toUpperCase();
+        const nameB = b.nombre.toUpperCase();
+
+        if (sortOrder === 'asc') {
+          return nameA.localeCompare(nameB);
+        } else {
+          return nameB.localeCompare(nameA);
+        }
+      });
+
       setProducts(productsData);
     } catch (error) {
       // Handle error
     }
+  };
+
+  const handleSortPress = () => {
+    // Toggle sort order when the button is pressed
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newSortOrder);
+    fetchProducts(); // Re-fetch products with the new sort order
   };
 
   useEffect(() => {
@@ -87,9 +101,17 @@ const ProductScreen = ({ navigation }) => {
   };
 
 
- return (
+  return (
     <View style={{ flex: 1 }}>
-        <Text style={styles.title}>Productos</Text>
+      <Text style={styles.title}>Productos en inventario</Text>
+
+      
+      <Button
+        title={`Ordenar los productos ${sortOrder === 'asc' ? 'Descendente' : 'Ascendente'}`}
+        onPress={handleSortPress}
+        buttonStyle={styles.button2}
+      />
+
       <FlatList
         data={products}
         keyExtractor={(product) => product._id}

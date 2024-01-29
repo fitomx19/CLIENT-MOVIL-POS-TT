@@ -9,6 +9,7 @@ import MenuScreen from './screens/Menu/MenuScreen';
 import ProductScreen from './screens/Productos/ProductosScreen';
 import ProductDetailScreen from './screens/Productos/ProductosDetailScreen'; 
 import ProductosAddScreen from './screens/Productos/ProductosAddScreen';
+import PedidosScreen from './screens/Pedido/PedidoScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,8 +24,9 @@ const App = () => {
         <Stack.Screen 
           name="ProductDetail" 
           component={ProductDetailScreen} 
-          initialParams={{ onGoBack: () => {} }} // Added this
+          initialParams={{ onGoBack: () => {} }}  
         />
+        <Stack.Screen name="PedidosScreen" component={PedidosScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

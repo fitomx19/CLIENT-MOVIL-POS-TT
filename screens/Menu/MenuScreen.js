@@ -45,7 +45,7 @@ const MenuScreen = ({ navigation }) => {
       <Text style={styles.title}>Menú</Text>
       <FlatList
         data={[
-          { key: 'Crear pedido', action: () => navigation.navigate('CreateOrderScreen') },
+          { key: 'Crear pedido', action: () => navigation.navigate('PedidosScreen') },
           { key: 'Administrar Inventario', action: () => navigation.navigate('ProductScreen') },
           { key: 'Crear producto | Categoría', action: () => navigation.navigate('ProductosAddScreen') },
           { key: 'Revisar pedidos', action: () => navigation.navigate('ReviewOrdersScreen') },
