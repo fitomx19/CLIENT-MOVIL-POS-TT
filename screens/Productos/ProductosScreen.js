@@ -104,8 +104,7 @@ const ProductScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <Text style={styles.title}>Productos en inventario</Text>
-
-      
+ 
       <Button
         title={`Ordenar los productos ${sortOrder === 'asc' ? 'Descendente' : 'Ascendente'}`}
         onPress={handleSortPress}

@@ -10,6 +10,7 @@ import ProductScreen from './screens/Productos/ProductosScreen';
 import ProductDetailScreen from './screens/Productos/ProductosDetailScreen'; 
 import ProductosAddScreen from './screens/Productos/ProductosAddScreen';
 import PedidosScreen from './screens/Pedido/PedidoScreen';
+import PedidoDetalleScreen from './screens/Pedido/PedidoDetalleScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ const App = () => {
           initialParams={{ onGoBack: () => {} }}  
         />
         <Stack.Screen name="PedidosScreen" component={PedidosScreen} />
+        <Stack.Screen name="PedidoDetalleScreen" component={PedidoDetalleScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

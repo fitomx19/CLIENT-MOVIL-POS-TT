@@ -19,14 +19,7 @@ const Cronometro = ( { segundos , setCorriendo , corriendo , setSegundos}) => {
         return () => clearInterval(interval);
       }, [corriendo]);
     
-      const handleIniciarDetener = () => {
-        setCorriendo((prevCorriendo) => !prevCorriendo);
-      };
-    
-      const handleReiniciar = () => {
-        setSegundos(0);
-        setCorriendo(false);
-      };
+   
 
       return (
         <View style={styles.container}>

@@ -1,94 +1,94 @@
-import React,{useEffect} from 'react'
-import { View, FlatList, StyleSheet, Text, Image, Button, Card, ListItem } from 'react-native';
-import { getProducts } from '../../Productos/ProductosScreenService';
-import styles from '../../../global.css.js';
+import React, {useState,useEffect} from 'react';
+import { View, FlatList, Text, Image, StyleSheet,TouchableOpacity  } from 'react-native';
+import { Card } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
 
+const ListaProductos = ({ products }) => {
+const [sortedProducts, setSortedProducts] = useState([]);
+const navigation = useNavigation(); // Inicializa la navegación
 
-const ListaProductos = ({products, setProducts , setSortOrder, sortOrder}) => {
-
-    
-  const fetchProducts = async () => {
-    try {
-      let productsData = await getProducts();
-        
-      // Sort products based on the current sort order
-      productsData = productsData.sort((a, b) => {
-        const nameA = a.nombre.toUpperCase();
-        const nameB = b.nombre.toUpperCase();
-
-        if (sortOrder === 'asc') {
-          return nameA.localeCompare(nameB);
-        } else {
-          return nameB.localeCompare(nameA);
-        }
-      });
-
-      setProducts(productsData);
-    } catch (error) {
-      console.error('Error en carga de productos:', error.message);
-    }
-  };
     useEffect(() => {
-        fetchProducts();
-    }, [])
+        // Ordenar los productos alfabéticamente por nombre
+        const sorted = [...products].sort((a, b) => a.nombre.localeCompare(b.nombre));
+        setSortedProducts(sorted);
+    }, [products]);
 
 
-    const handleSortPress = () => {
-        // Toggle sort order when the button is pressed
-        const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-        setSortOrder(newSortOrder);
-        fetchProducts(); // Re-fetch products with the new sort order
-      };
+  const renderProduct = ({ item }) => {
+    const productImage = item.imagen
+      ? { uri: item.imagen }
+      : { uri: 'https://ibarramayoreo.com/detalle/images/iconos/no-encontrado.png' };
 
-      const renderItem = ({ item }) => {
-        const productImage = item.imagen ? { uri: item.imagen } : { uri: 'https://ibarramayoreo.com/detalle/images/iconos/no-encontrado.png' };
-        const statusColor = item.activo ? 'green' : 'red';
-    
-        return (
-          <View style={styles.productContainer}>
-             <Card containerStyle={styles.cardContainer} >
-              <Image source={productImage} style={styles.productImage} />
-              <Text style={styles.productTitle}>{item.nombre}</Text>
-              <Text style={styles.productDescription}>{item.descripcion}</Text>
-              <Text style={{ color: statusColor }}>{item.activo ? 'Activo' : 'Inactivo'}</Text>
-    
-            {/*   <FlatList
-                data={item.variantes}
-                keyExtractor={(variante) => variante._id}
-                renderItem={({ item: variante }) => (
-                  <ListItem>
-                    <Text style={styles.variantName}>{variante.nombre}</Text>
-                    <Text style={styles.variantInfo}>Existencias: {variante.existencias}</Text>
-                    <Text style={styles.variantInfo}>Precio: ${variante.precio}</Text>
-                  </ListItem>
-                )}
-              /> */}
-            </Card>
-          {/*   <Button
-              title="Ver detalles"
-              
-              buttonStyle={styles.button}
-            /> */}
+    const navigateToDetails = () => {
+      // Navegar a la pantalla de detalles con el producto como parámetro
+      navigation.navigate('PedidoDetalleScreen', { producto: item });
+    };
+
+    return (
+      <TouchableOpacity onPress={navigateToDetails}>
+      <Card style={styles.card}>
+        <View style={styles.contentContainer}>
+          <Image style={styles.image} source={productImage} />
+          <View style={styles.textContainer}>
+            <Text style={styles.productName}>{item.nombre}</Text>
+            <Text style={styles.productDescription}>{item.descripcion}</Text>
+            <Text style={styles.productPrice}>Precio: ${item.precio}.00</Text>
+            <Text style={styles.productPrice}>Existencias: {item.existencias}</Text>
           </View>
-        );
-      };
-      return (
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>Productos en inventario</Text>
-     
-          <Button
-            title={`Ordenar los productos ${sortOrder === 'asc' ? 'Descendente' : 'Ascendente'}`}
-            onPress={handleSortPress}
-            buttonStyle={styles.button2}
-          />
-    
-          <FlatList
-            data={products}
-            keyExtractor={(product) => product._id}
-            renderItem={renderItem}
-          />
         </View>
-      );
-}
+      </Card>
+      </TouchableOpacity>
+    );
+  };
 
-export default ListaProductos
+  return (
+    <FlatList
+      style={styles.container}
+      data={sortedProducts}
+      keyExtractor={(item) => item._id}
+      renderItem={renderProduct}
+      ListEmptyComponent={<Text>Cargando ... </Text>}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  card: {
+    marginBottom: 10,
+    padding: 10,
+    elevation: 3,
+  },
+  contentContainer: {
+    flexDirection: 'row',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+    marginRight: 10,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  productDescription: {
+    marginBottom: 5,
+  },
+  productPrice: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  status: {
+    fontSize: 16,
+  },
+});
+
+export default ListaProductos;
