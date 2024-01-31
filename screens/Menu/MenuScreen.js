@@ -25,9 +25,18 @@ const MenuScreen = ({ navigation }) => {
     }
   };
 
+  const handleCorteCaja = async () => {
+    await AsyncStorage.removeItem('subpedido');
+    //crear alerta con el total de ventas
+    alert('Corte de caja realizado con éxito');
+  }
+
   const handleCheckToken = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
+      //descomponer el token
+
+      
 
       if (!token) {
         navigation.navigate('LoginScreen');
@@ -50,7 +59,7 @@ const MenuScreen = ({ navigation }) => {
           { key: 'Administrar Inventario', action: () => navigation.navigate('ProductScreen') },
           { key: 'Crear producto | Categoría', action: () => navigation.navigate('ProductosAddScreen') },
           { key: 'Revisar pedidos', action: () => navigation.navigate('ReviewOrdersScreen') },
-          { key: 'Corte de Caja', action: () => navigation.navigate('ProductScreen') },
+          { key: 'Corte de Caja', action: handleCorteCaja },
           { key: 'Cerrar sesion', action: handleLogout },
         ]}
         numColumns={2}

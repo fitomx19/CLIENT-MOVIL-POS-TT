@@ -131,7 +131,9 @@ const handleEliminarVariante = (id) => {
         onPress={handleAñadirPedido}
       >
         <Text style={pedidoDetalleStyles.añadirButtonText}>Añadir Pedido</Text>
+        
       </TouchableOpacity>
+      <View style={{ width: 10 , marginBottom: 50}} />
     </ScrollView>
   );
 };

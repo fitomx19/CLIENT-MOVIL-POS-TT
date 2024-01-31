@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   trashButton: {
     backgroundColor: 'red',
     padding: 10,
+    marginRight: 20,
     borderRadius: 8,
     alignItems: 'center',
   },
