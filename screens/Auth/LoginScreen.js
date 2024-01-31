@@ -31,13 +31,16 @@ const LoginScreen = () => {
     resizeMode="cover"
     >
       <View style={styles.overlay}>
+        <Text style={styles.titlePlus}>POS SYSTEM ++ </Text>
         <Text style={styles.title}>Iniciar Sesión</Text>
+        <Text style={{color:"white"}}>Usuario</Text>
         <TextInput
           style={styles.input}
           placeholder="Correo electrónico"
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
+        <Text style={{color:"white"}}>Contraseña</Text>
         <TextInput
           style={styles.input}
           placeholder="Contraseña"
@@ -63,8 +66,14 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
+    fontSize: 18,
+    marginBottom: 16,
+    color: 'white', // Set text color to white
+  },
+  titlePlus:{
     fontSize: 24,
     marginBottom: 16,
+    textAlign: 'center',
     color: 'white', // Set text color to white
   },
   input: {

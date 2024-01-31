@@ -4,10 +4,8 @@ import { View, Text, Switch, TextInput, Pressable , StyleSheet, Alert } from 're
 const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
   const [updatedProduct, setUpdatedProduct] = useState({
     nombre: product.nombre,
-    precio: product.precio,
     descripcion: product.descripcion,
     imagen: product.imagen,
-    existencias: product.existencias,
     perecedero: product.perecedero,
     variantes: product.variantes || [], // Add the existing variants to the state
   });
@@ -32,17 +30,7 @@ const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
         onChangeText={(text) => setUpdatedProduct({ ...updatedProduct, nombre: text })}
       />
 
-      <Text style={styles.label}>Nuevo Precio:</Text>
-      {
-      updatedProduct.variantes && updatedProduct.variantes.length > 0 ? (
-        <TextInput
-          style={styles.input}
-          value={updatedProduct.precio.toString() || '0'}
-          keyboardType="numeric"
-          onChangeText={(text) => setUpdatedProduct({ ...updatedProduct, precio: text })}
-        />
-      ) : null
-    }
+   
 
 
       <Text style={styles.label}>Nueva Descripción:</Text>
@@ -60,14 +48,7 @@ const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
         onChangeText={(text) => setUpdatedProduct({ ...updatedProduct, imagen: text })}
       />
 
-      <Text style={styles.label}>Existencia:</Text>
-      <TextInput
-        style={styles.input}
-        value={updatedProduct.existencias.toString() || '0'}
-        keyboardType="numeric"
-        disabled={true}
-        onChangeText={(text) => setUpdatedProduct({ ...updatedProduct, existencias: text })}
-      />
+    
 
       <Text style={styles.label}>Perecedero:</Text>
       <Switch

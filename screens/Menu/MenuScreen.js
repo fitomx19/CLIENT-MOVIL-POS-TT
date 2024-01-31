@@ -18,6 +18,7 @@ const MenuScreen = ({ navigation }) => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('subpedido');
       navigation.navigate('LoginScreen');
     } catch (error) {
       console.error('Error en el cierre de sesión:', error.message);

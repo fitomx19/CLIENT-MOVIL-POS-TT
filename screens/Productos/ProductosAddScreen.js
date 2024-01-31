@@ -6,10 +6,8 @@ import {createProduct} from './ProductosScreenService'
 const ProductosAddScreen = ({  navigation }) => {
     const [producto, setUpdatedProduct] = useState({
         nombre: "",
-        precio: "",
         descripcion: "",
         imagen: "",
-        existencias: 0,
         perecedero: false,
         codigo_barras: "",
         variantes:  [], 
@@ -33,10 +31,10 @@ const ProductosAddScreen = ({  navigation }) => {
         Alert.alert('Error', 'La imagen del producto es requerido.');
         return;
     }
-    if (producto.existencias.toString().trim() === '') {
-        Alert.alert('Error', 'Las existencias del producto es requerido.');
-        return;
-    }   
+   if(producto.variantes.length == 0){
+      Alert.alert('Error', 'El producto debe tener al menos una variante.');
+      return;
+    }
     createProduct(producto);
     //mostrar mensaje de actualización exitosa
     Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
@@ -45,10 +43,8 @@ const ProductosAddScreen = ({  navigation }) => {
     //limpiar formulario
     setUpdatedProduct({
         nombre: "",
-        precio: "",
         descripcion: "",
         imagen: "",
-        existencias: 0,
         perecedero: false,
         codigo_barras: "",
         variantes:  [], 
@@ -68,17 +64,7 @@ const ProductosAddScreen = ({  navigation }) => {
         onChangeText={(text) => setUpdatedProduct({ ...producto, nombre: text })}
       />
 
-      <Text style={styles.label}>Precio (En caso de que no tenga variantes):</Text>
-      {
-      producto.variantes && producto.variantes.length == 0 ? (
-        <TextInput
-          style={styles.input}
-          value={producto || '0'}
-          keyboardType="numeric"
-          onChangeText={(text) => setUpdatedProduct({ ...producto, precio: text })}
-        />
-      ) : null
-    }
+      
 
 
       <Text style={styles.label}>Descripción:</Text>
@@ -102,13 +88,7 @@ const ProductosAddScreen = ({  navigation }) => {
         value={producto.codigo_barras}
         onChangeText={(text) => setUpdatedProduct({ ...producto, codigo_barras: text })}
       />
-      <Text style={styles.label}>Existencia: (En caso de que no tenga variantes)</Text>
-      <TextInput
-        style={styles.input}
-        value={producto.existencias.toString() || '0'}
-        keyboardType="numeric"
-        onChangeText={(text) => setUpdatedProduct({ ...producto, existencias: text })}
-      />
+      
 
       <Text style={styles.label}>Perecedero:</Text>
       <Switch

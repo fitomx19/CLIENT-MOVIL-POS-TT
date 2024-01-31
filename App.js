@@ -27,7 +27,7 @@ const App = () => {
           component={ProductDetailScreen} 
           initialParams={{ onGoBack: () => {} }}  
         />
-        <Stack.Screen name="PedidosScreen" component={PedidosScreen} />
+        <Stack.Screen name="PedidosScreen" component={PedidosScreen}  />
         <Stack.Screen name="PedidoDetalleScreen" component={PedidoDetalleScreen} />
       </Stack.Navigator>
     </NavigationContainer>
