@@ -58,7 +58,7 @@ const MenuScreen = ({ navigation }) => {
           { key: 'Crear pedido', action: () => navigation.navigate('PedidosScreen') },
           { key: 'Administrar Inventario', action: () => navigation.navigate('ProductScreen') },
           { key: 'Crear producto | Categoría', action: () => navigation.navigate('ProductosAddScreen') },
-          { key: 'Revisar pedidos', action: () => navigation.navigate('ReviewOrdersScreen') },
+          { key: 'Revisar pedidos', action: () => navigation.navigate('RevisarPedidosScreen') },
           { key: 'Corte de Caja', action: handleCorteCaja },
           { key: 'Cerrar sesion', action: handleLogout },
         ]}

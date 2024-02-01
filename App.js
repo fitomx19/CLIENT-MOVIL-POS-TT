@@ -12,7 +12,7 @@ import ProductosAddScreen from './screens/Productos/ProductosAddScreen';
 import PedidosScreen from './screens/Pedido/PedidoScreen';
 import PedidoDetalleScreen from './screens/Pedido/PedidoDetalleScreen';
 import PagoScreen from './screens/Pago/PagoScreen';
-
+import RevisarPedidosScreen from './screens/Pedido/RevisarPedidosScreen';
 
 const Stack = createStackNavigator();
 
@@ -34,6 +34,7 @@ const App = () => {
         <Stack.Screen name="PedidosScreen" component={PedidosScreen}  />
         <Stack.Screen name="PedidoDetalleScreen" component={PedidoDetalleScreen} />
         <Stack.Screen name="PagoScreen" component={PagoScreen} />
+        <Stack.Screen name="RevisarPedidosScreen" component={RevisarPedidosScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
