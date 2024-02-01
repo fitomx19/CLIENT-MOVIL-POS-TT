@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
+import {createTicket} from './PagoScreenService';
+import { useNavigation } from '@react-navigation/native';
 
- 
+
 const PagoScreen = ({ route }) => {
+    const navigation = useNavigation();
+
   const { total } = route.params;
   const [pedido, setPedido] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('');  
@@ -44,6 +48,17 @@ const PagoScreen = ({ route }) => {
     // Aquí puedes realizar acciones adicionales con orderData, como enviarlo a tu backend
 
     console.log('Pedido JSON:', orderData);
+    try {
+        createTicket(orderData);
+        //limpiar el subpedido en AsyncStorage
+        AsyncStorage.removeItem('subpedido');
+        alert('Pedido realizado con éxito');
+        // Navegar a la pantalla de inicio
+        navigation.navigate('MenuScreen');
+    } catch (error) {
+        alert('Error al realizar el pedido');
+    }
+    
   };
 
   return (
