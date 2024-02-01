@@ -1,8 +1,8 @@
 import React, {useState,useEffect} from 'react';
 import { View, FlatList, Text, Image, StyleSheet,TouchableOpacity  } from 'react-native';
 import { Card } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
-import { listaProductosStyles } from '../styles/ListaProductosStyles'; // Importa los estilos
+import { useNavigation } from '@react-navigation/native';  
+import { listaProductosStyles } from '../styles/ListaProductosStyles';  
 
 const ListaProductos = ({ products }) => {
   const [sortedProducts, setSortedProducts] = useState([]);

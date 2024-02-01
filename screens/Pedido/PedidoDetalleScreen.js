@@ -13,16 +13,23 @@ const PedidoDetalleScreen = ({ route }) => {
 
   const handleAgregarVariante = (id, nombre, precio) => {
     const existente = subpedido.find((item) => item._id === id);
-
+  
+    const productoOrigen = producto.nombre; // Obtener el nombre del producto origen
+    const productoId = producto._id; // Obtener el identificador del producto origen
+  
     if (existente) {
       const nuevoSubpedido = subpedido.map((item) =>
         item._id === id ? { ...item, cantidad: item.cantidad + 1 } : item
       );
       setSubpedido(nuevoSubpedido);
+       
     } else {
-      setSubpedido([...subpedido, { _id: id, nombre, cantidad: 1, precio_unitario: precio }]);
+      // Agregar la información adicional al objeto de la variante
+      const nuevaVariante = { _id: id, nombre, cantidad: 1, precio_unitario: precio, productoOrigen, productoId };
+      setSubpedido([...subpedido, nuevaVariante]);
     }
   };
+  
 
  
 
@@ -103,40 +110,50 @@ const handleEliminarVariante = (id) => {
     cargarSubpedido();
   }, []); // El segundo argumento [] asegura que se ejecute solo al montar el componente
 
+  const renderSubpedidoItem = ({ item }) => (
+    <View style={pedidoDetalleStyles.subpedidoItem} key={item._id}>
+       
+      <Text style={{fontWeight:700}}>{item.productoOrigen} - {item.nombre}</Text>
+      <Text>Cantidad: {item.cantidad}</Text>
+      <Text>Precio Unitario: ${item.precio_unitario}</Text>
+    </View>
+  );
+
   return (
-    <ScrollView style={pedidoDetalleStyles.container}>
-      <Text style={pedidoDetalleStyles.productName}>{producto.nombre}</Text>
-      <Text style={pedidoDetalleStyles.productDescription}>{producto.descripcion}</Text>
-      <Text style={pedidoDetalleStyles.productInfo}>Existencias: {producto.existencias}</Text>
-      <Text style={pedidoDetalleStyles.sectionTitle}>Variaciones:</Text>
-      <FlatList
-        data={producto.variantes}
-        keyExtractor={(item) => item._id}
-        renderItem={renderVarianteItem}
-      />
-
-      {/* Mostrar el subpedido al finalizar */}
-      <Text style={pedidoDetalleStyles.sectionTitle}>Subpedido:</Text>
-      {subpedido.map((item) => (
-        <View style={pedidoDetalleStyles.subpedidoItem} key={item._id}>
-          <Text>{item.nombre}</Text>
-          <Text>Cantidad: {item.cantidad}</Text>
-          <Text>Precio Unitario: ${item.precio_unitario}</Text>
-        </View>
-      ))}
-
-      {/* Botón para añadir el pedido */}
-      <TouchableOpacity
-        style={pedidoDetalleStyles.añadirButton}
-        onPress={handleAñadirPedido}
-      >
-        <Text style={pedidoDetalleStyles.añadirButtonText}>Añadir Pedido</Text>
-        
-      </TouchableOpacity>
-      <View style={{ width: 10 , marginBottom: 50}} />
-    </ScrollView>
+    <FlatList
+      style={pedidoDetalleStyles.container}
+      ListHeaderComponent={
+        <>
+          <Text style={pedidoDetalleStyles.productName}>{producto.nombre}</Text>
+          <Text style={pedidoDetalleStyles.productDescription}>{producto.descripcion}</Text>
+          <Text style={pedidoDetalleStyles.productInfo}>Existencias: {producto.existencias}</Text>
+          <Text style={pedidoDetalleStyles.sectionTitle}>Variaciones:</Text>
+        </>
+      }
+      data={producto.variantes}
+      keyExtractor={(item) => item._id}
+      renderItem={renderVarianteItem}
+      ListFooterComponent={
+        <>
+          <Text style={pedidoDetalleStyles.sectionTitle}>Subpedido:</Text>
+          <FlatList
+            data={subpedido}
+            keyExtractor={(item) => item._id}
+            renderItem={renderSubpedidoItem}
+          />
+          <TouchableOpacity
+            style={pedidoDetalleStyles.añadirButton}
+            onPress={handleAñadirPedido}
+          >
+            <Text style={pedidoDetalleStyles.añadirButtonText}>Añadir Pedido</Text>
+          </TouchableOpacity>
+          <View style={{ width: 10, marginBottom: 50 }} />
+        </>
+      }
+    />
   );
 };
+ 
 
  
 

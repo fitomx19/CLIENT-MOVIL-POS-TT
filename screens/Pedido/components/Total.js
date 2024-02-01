@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native'; 
+
 
 const Total = ({total,setTotal}) => {
-  
+  const navigation = useNavigation();
+
+  const navigateToPay = async () => {
+      navigation.navigate('PagoScreen' , { total : total} );
+    };
 
   useEffect(() => {
     // Calcular el total al cargar el componente
@@ -30,9 +36,7 @@ const Total = ({total,setTotal}) => {
   };
 
   const handlePagar = () => {
-    // Agregar lógica para el botón de pagar
-    // Por ahora, solo mostraremos un mensaje
-    alert('Botón de Pagar presionado');
+    navigateToPay();
   };
 
   const handleLimpiarLocalStorage = async () => {
