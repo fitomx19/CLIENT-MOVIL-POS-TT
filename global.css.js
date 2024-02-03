@@ -16,6 +16,15 @@ const styles = StyleSheet.create({
         color: 'green',
       },
 
+      subtitle: {
+        fontSize: 16,
+        marginBottom: 16,
+        textAlign: 'center',
+         
+        padding: 10,
+        color: 'green',
+      },
+
       button: {
         backgroundColor: 'forestgreen', // Color verde forestal
         marginHorizontal: 40,

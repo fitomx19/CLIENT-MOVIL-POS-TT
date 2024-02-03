@@ -52,7 +52,9 @@ const MenuScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={{marginVertical:30}}/>
       <Text style={styles.title}>Menú</Text>
+      <Text style={styles.subtitle}>Restaurante los cacomixtles</Text>
       <FlatList
         data={[
           { key: 'Crear pedido', action: () => navigation.navigate('PedidosScreen') },

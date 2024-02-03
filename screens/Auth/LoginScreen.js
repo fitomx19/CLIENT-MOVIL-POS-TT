@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ImageBackground, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from '@react-navigation/native';
 import handleLogin from './LoginScreenService';
+
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.error('Error en el inicio de sesión:', error.message);
+      Alert.alert('Error', 'Usuario o contraseña incorrectos');
     }
   };
 
@@ -31,6 +33,7 @@ const LoginScreen = () => {
     resizeMode="cover"
     >
       <View style={styles.overlay}>
+        
         <Text style={styles.titlePlus}>POS SYSTEM ++ </Text>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <Text style={{color:"white"}}>Usuario</Text>
