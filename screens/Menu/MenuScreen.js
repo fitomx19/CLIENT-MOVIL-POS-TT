@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Button, Icon, Grid, Row } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PedidosList from './components/PedidosList';
+
 import {
   SafeAreaView,
   View,

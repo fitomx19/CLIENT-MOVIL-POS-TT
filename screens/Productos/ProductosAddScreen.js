@@ -3,11 +3,17 @@
 import { View, Text, Switch, TextInput, Pressable , StyleSheet, Alert, ScrollView } from 'react-native';
 import React, { Component, useState } from 'react'
 import {createProduct} from './ProductosScreenService'
+import { Permissions } from 'expo';
+
+import * as ImagePicker from 'expo-image-picker';
+
+
+
 const ProductosAddScreen = ({  navigation }) => {
     const [producto, setUpdatedProduct] = useState({
         nombre: "",
         descripcion: "",
-        imagen: "",
+        imagen: null,
         perecedero: false,
         codigo_barras: "",
         variantes:  [], 
@@ -15,8 +21,35 @@ const ProductosAddScreen = ({  navigation }) => {
 
     const [isEnabled, setIsEnabled] = useState(false);
 
+      // Función para seleccionar una imagen
+  const selectImage = async () => {
+    console.log('Solicitando permisos...');
+    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY_READ);
+    console.log('Estado de los permisos:', status);
+
+  
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permiso necesario',
+        'La aplicación necesita permisos para acceder a la galería de imágenes.'
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
     
-  const handleAdd = () => {
+      setUpdatedProduct({ ...producto, imagen: result.uri }); // Actualiza el estado con la URI de la imagen seleccionada
+     
+  };
+
+
+  const handleAdd = async () => {
     // Aquí puedes realizar validaciones antes de enviar la actualización al servicio
 
     if (producto.nombre.trim() === '') {
@@ -35,22 +68,36 @@ const ProductosAddScreen = ({  navigation }) => {
       Alert.alert('Error', 'El producto debe tener al menos una variante.');
       return;
     }
-    createProduct(producto);
-    //mostrar mensaje de actualización exitosa
-    Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
-      { text: 'OK', onPress: () => navigation.navigate('ProductScreen') }, // Navega hacia atrás al presionar OK
+    
+    try {
+      // Crea un nuevo objeto producto con los datos del estado
+      const newProduct = {
+        ...producto,
+        imagen: producto.imagen ? { uri: producto.imagen, name: 'imagen.jpg', type: 'image/jpeg' } : null, // Convierte la URI en un objeto compatible con FormData
+      };
+      
+      // Llama a la función createProduct con el nuevo objeto producto
+      await createProduct(newProduct);
 
-    //limpiar formulario
-    setUpdatedProduct({
+      // Muestra un mensaje de éxito
+      Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
+        { text: 'OK', onPress: () => navigation.navigate('ProductScreen') }, // Navega hacia atrás al presionar OK
+      ]);
+
+      // Limpia el formulario
+      setUpdatedProduct({
         nombre: "",
         descripcion: "",
-        imagen: "",
+        imagen: null,
         perecedero: false,
         codigo_barras: "",
-        variantes:  [], 
-      })
-
-    ]);
+        variantes: [],
+      });
+    } catch (error) {
+      console.error('Error creating product:', error);
+      Alert.alert('Error', 'Ha ocurrido un error al agregar el producto.');
+    }
+    
   };
     return (
         <View style={{ flex: 1 }}>
@@ -74,12 +121,10 @@ const ProductosAddScreen = ({  navigation }) => {
         onChangeText={(text) => setUpdatedProduct({ ...producto, descripcion: text })}
       />
 
-      <Text style={styles.label}>Imagen:</Text>
-      <TextInput
-        style={styles.input}
-        value={producto.imagen}
-        onChangeText={(text) => setUpdatedProduct({ ...producto, imagen: text })}
-      />
+      <Pressable style={styles.button} onPress={selectImage}>
+      <Text  >Seleccionar Imagen</Text>
+    </Pressable>
+
 
     <Text style={styles.label}>Codigo de Barras:</Text>
       <TextInput
@@ -174,6 +219,17 @@ const ProductosAddScreen = ({  navigation }) => {
         label: {
           fontSize: 16,
           marginBottom: 8,
+        },
+        button: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingVertical: 12,
+          paddingHorizontal: 32,
+          borderRadius: 4,
+          elevation: 3,
+          backgroundColor: 'orange',
+          marginBottom: 16,
+          marginTop: 16,
         },
         input: {
           height: 40,
