@@ -86,36 +86,47 @@ export const updateProduct = async (productId, updatedData) => {
 
   export const createProduct = async (product) => {
     try {
-      const token = await AsyncStorage.getItem('token');
-  
-      // Crear un objeto FormData para enviar datos como formulario (incluida la imagen)
-      const formData = new FormData();
-      formData.append('nombre', product.nombre);
-      formData.append('descripcion', product.descripcion); 
-      formData.append('variantes', product.variantes);
-      formData.append('imagen', {
-        uri: product.imagen, // URI de la imagen en el dispositivo
-        name: 'imagen.jpg', // Nombre de archivo para el servidor
-        type: 'image/jpeg', // Tipo MIME de la imagen
-      });
-      formData.append('perecedero', product.perecedero ? 'true' : 'false');
-      formData.append('codigo_barras', product.codigo_barras);
+        const token = await AsyncStorage.getItem('token');
     
-  
-      const response = await fetch(`${BASE_URL}/product`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // No es necesario establecer Content-Type, ya que FormData lo establece automáticamente
-        },
-        body: formData,
-      });
-  
-      const data = await response.json();
-      console.log('Product created:', data);
-      return data;
+        const formData = new FormData();
+    
+        // Agregar cada parámetro al FormData
+        formData.append('nombre', product.nombre);
+        formData.append('descripcion', product.descripcion);
+        formData.append('perecedero', product.perecedero.toString()); // Convertir a cadena
+        formData.append('codigo_barras', product.codigo_barras);
+        formData.append('imagen', {
+            uri: product.imagen,
+            name: 'imagen.jpg',
+            type: 'image/jpeg',
+        });
+
+        // Agregar las variantes
+        product.variantes.forEach((variante, index) => {
+            formData.append(`variantes[${index}][nombre]`, variante.nombre);
+            formData.append(`variantes[${index}][existencias]`, variante.existencias.toString());
+            formData.append(`variantes[${index}][precio]`, variante.precio.toString());
+        });
+
+        console.log("formData 😹", formData);
+        
+        const response = await fetch(`${BASE_URL}/product`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}` ,
+                'Content-Type': 'multipart/form-data'
+            },
+            body: formData,
+        });
+    
+        console.log("response", response);
+    
+        const data = await response.json(); 
+        console.log('Product created:', data);
+        return data; 
     } catch (error) {
-      console.error('Error creating product:', error);
-      throw error;
+        console.error('Error creating product:', error);
+        throw error;
     }
-  };
+};
+

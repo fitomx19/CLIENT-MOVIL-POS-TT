@@ -4,7 +4,7 @@ import { View, Text, Switch, TextInput, Pressable , StyleSheet, Alert, ScrollVie
 import React, { Component, useState } from 'react'
 import {createProduct} from './ProductosScreenService'
 import { Permissions } from 'expo';
-
+import { Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -22,32 +22,22 @@ const ProductosAddScreen = ({  navigation }) => {
     const [isEnabled, setIsEnabled] = useState(false);
 
       // Función para seleccionar una imagen
-  const selectImage = async () => {
-    console.log('Solicitando permisos...');
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY_READ);
-    console.log('Estado de los permisos:', status);
-
-  
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permiso necesario',
-        'La aplicación necesita permisos para acceder a la galería de imágenes.'
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
+   
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
     
-      setUpdatedProduct({ ...producto, imagen: result.uri }); // Actualiza el estado con la URI de la imagen seleccionada
-     
-  };
-
+        console.log(result);
+    
+        if (!result.canceled) {
+          setUpdatedProduct({ ...producto, imagen: result.assets[0].uri })
+        }
+      };
 
   const handleAdd = async () => {
     // Aquí puedes realizar validaciones antes de enviar la actualización al servicio
@@ -73,13 +63,13 @@ const ProductosAddScreen = ({  navigation }) => {
       // Crea un nuevo objeto producto con los datos del estado
       const newProduct = {
         ...producto,
-        imagen: producto.imagen ? { uri: producto.imagen, name: 'imagen.jpg', type: 'image/jpeg' } : null, // Convierte la URI en un objeto compatible con FormData
+        imagen: producto.imagen  , // Convierte la URI en un objeto compatible con FormData
       };
       
       // Llama a la función createProduct con el nuevo objeto producto
       await createProduct(newProduct);
 
-      // Muestra un mensaje de éxito
+    /*   // Muestra un mensaje de éxito
       Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
         { text: 'OK', onPress: () => navigation.navigate('ProductScreen') }, // Navega hacia atrás al presionar OK
       ]);
@@ -92,7 +82,7 @@ const ProductosAddScreen = ({  navigation }) => {
         perecedero: false,
         codigo_barras: "",
         variantes: [],
-      });
+      }); */
     } catch (error) {
       console.error('Error creating product:', error);
       Alert.alert('Error', 'Ha ocurrido un error al agregar el producto.');
@@ -121,10 +111,10 @@ const ProductosAddScreen = ({  navigation }) => {
         onChangeText={(text) => setUpdatedProduct({ ...producto, descripcion: text })}
       />
 
-      <Pressable style={styles.button} onPress={selectImage}>
+      <Pressable style={styles.button} onPress={pickImage}>
       <Text  >Seleccionar Imagen</Text>
-    </Pressable>
-
+      </Pressable>
+      {producto.imagen && <Image source={{ uri: producto.imagen }} style={{ width: 200, height: 200 }} />}
 
     <Text style={styles.label}>Codigo de Barras:</Text>
       <TextInput
