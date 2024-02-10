@@ -6,7 +6,10 @@ const BASE_URL = pedidos + 'ticket';
 
 export const createTicket = async (product) => {
 
+  
   try{
+    console.log('Ticket a crear:', product);  
+
     const token = await AsyncStorage.getItem('token');
     const headers = {
       Authorization: `Bearer ${token}`,

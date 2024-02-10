@@ -14,7 +14,7 @@ const ListaProductos = ({ products }) => {
   }, [products]);
 
   const renderProduct = ({ item }) => {
-    console.log('URL de la imagen:', item.imagen);
+    //console.log('URL de la imagen:', item.imagen);
 
     const productImage = item.imagen
       ? { uri: "https://storage.googleapis.com/productos_pos_plus/1707449165831-51c1e53115a38b9ada4330dfbe5c7890.jpg" }

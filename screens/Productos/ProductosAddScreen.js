@@ -69,7 +69,7 @@ const ProductosAddScreen = ({  navigation }) => {
       // Llama a la función createProduct con el nuevo objeto producto
       await createProduct(newProduct);
 
-    /*   // Muestra un mensaje de éxito
+       // Muestra un mensaje de éxito
       Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
         { text: 'OK', onPress: () => navigation.navigate('ProductScreen') }, // Navega hacia atrás al presionar OK
       ]);
@@ -82,7 +82,7 @@ const ProductosAddScreen = ({  navigation }) => {
         perecedero: false,
         codigo_barras: "",
         variantes: [],
-      }); */
+      }); 
     } catch (error) {
       console.error('Error creating product:', error);
       Alert.alert('Error', 'Ha ocurrido un error al agregar el producto.');

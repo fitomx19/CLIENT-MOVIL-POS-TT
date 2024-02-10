@@ -14,8 +14,8 @@ const PagoScreen = ({ route }) => {
   const [paymentMethod, setPaymentMethod] = useState('');  
   const [comments, setComments] = useState(''); 
   const [cocina, setCocina] = useState(false);
-
-  console.log('Total en PagoScreen:', pedido);
+  const [hora_fin, setHoraFin] = useState(new Date());
+   
 
   const obtenerPedido = async () => {
     const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -29,7 +29,7 @@ const PagoScreen = ({ route }) => {
     obtenerPedido();
   }, []);
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     // Lógica para procesar el pago y crear el objeto JSON
     const jsonPedido = pedido.map(item => ({
       producto: item.productoId,
@@ -49,15 +49,27 @@ const PagoScreen = ({ route }) => {
 
     console.log('Pedido JSON:', orderData);
     try {
-        createTicket(orderData);
-        //limpiar el subpedido en AsyncStorage
-        AsyncStorage.removeItem('subpedido');
-        alert('Pedido realizado con éxito');
-        // Navegar a la pantalla de inicio
-        navigation.navigate('MenuScreen');
-    } catch (error) {
-        alert('Error al realizar el pedido');
-    }
+      // Obtener la hora de inicio de AsyncStorage
+      const hora_inicio = await AsyncStorage.getItem('hora_inicio'); // Añadir await para esperar la promesa
+  
+      // Agregar la hora de fin al objeto orderData (no se muestra cómo se define hora_fin)
+      orderData.hora_fin = new Date().toISOString(); // Supongo que hora_fin se define en otro lugar o se usa la hora actual
+      // Agregar la hora de inicio al objeto orderData
+      orderData.hora_inicio = hora_inicio; // No necesitas convertir a ISOString ya que ya debería ser una cadena de tiempo
+  
+      console.log('Pedido JSON:', orderData);
+      createTicket(orderData);
+      
+      // Limpiar el subpedido en AsyncStorage
+      await AsyncStorage.removeItem('subpedido'); // Añadir await para esperar la promesa
+  
+      alert('Pedido realizado con éxito');
+      navigation.navigate('MenuScreen'); // Corregir la escritura de "navigation"
+  } catch (error) {
+      console.error('Error al realizar el pedido:', error); // Imprimir el error en la consola para facilitar la depuración
+      alert('Error al realizar el pedido');
+  }
+  
     
   };
 

@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, Image } from 'react-native';
 import Total from './components/Total';
-import { getProducts } from '../Productos/ProductosScreenService';
-import Cronometro from './components/Cronometro';
+import { getProducts } from '../Productos/ProductosScreenService'; 
 import ListaProductos from './components/ListaProductos';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
 const PedidosAddScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [segundos, setSegundos] = useState(0);
   const [corriendo, setCorriendo] = useState(false);
   const [total, setTotal] = useState(0);
-
+  const [hora_inicio, setHoraInicio] = useState(new Date());
 
   const fetchProducts = async () => {
     try {
@@ -21,6 +18,14 @@ const PedidosAddScreen = ({ navigation }) => {
       setProducts(productsData);
     } catch (error) {
       console.error('Error en carga de productos:', error.message);
+    }
+
+    setHoraInicio(new Date());
+    //guardar la hora de inicio en AsyncStorage
+    try {
+      await AsyncStorage.setItem('hora_inicio', hora_inicio.toISOString());
+    } catch (error) {
+      console.error('Error al guardar hora_inicio en AsyncStorage:', error);
     }
   };
 
