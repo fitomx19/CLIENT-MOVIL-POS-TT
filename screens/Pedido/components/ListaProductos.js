@@ -14,8 +14,10 @@ const ListaProductos = ({ products }) => {
   }, [products]);
 
   const renderProduct = ({ item }) => {
+    console.log('URL de la imagen:', item.imagen);
+
     const productImage = item.imagen
-      ? { uri: item.imagen }
+      ? { uri: "https://storage.googleapis.com/productos_pos_plus/1707449165831-51c1e53115a38b9ada4330dfbe5c7890.jpg" }
       : { uri: 'https://ibarramayoreo.com/detalle/images/iconos/no-encontrado.png' };
 
     const navigateToDetails = () => {
@@ -26,7 +28,7 @@ const ListaProductos = ({ products }) => {
       <TouchableOpacity onPress={navigateToDetails}>
         <Card style={listaProductosStyles.card}>
           <View style={listaProductosStyles.contentContainer}>
-            <Image style={listaProductosStyles.image} source={productImage} />
+            <Image style={listaProductosStyles.image} source={{ uri: item.imagen }} />
             <View style={listaProductosStyles.textContainer}>
               <Text style={listaProductosStyles.productName}>{item.nombre}</Text>
               <Text style={listaProductosStyles.productDescription}>{item.descripcion}</Text>

@@ -16,6 +16,8 @@ export const listaProductosStyles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
+    minWidth: 100,
+    minWidth: 100,
     resizeMode: 'cover',
     marginRight: 10,
   },

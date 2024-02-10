@@ -1,5 +1,7 @@
 import { productos } from "../../enviroment";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
 
 const BASE_URL = productos + 'product';
 
@@ -86,18 +88,21 @@ export const updateProduct = async (productId, updatedData) => {
 
   export const createProduct = async (product) => {
     try {
+        console.log("producto -> 😹", product);
         const token = await AsyncStorage.getItem('token');
-    
+
         const formData = new FormData();
-    
+
         // Agregar cada parámetro al FormData
         formData.append('nombre', product.nombre);
         formData.append('descripcion', product.descripcion);
         formData.append('perecedero', product.perecedero.toString()); // Convertir a cadena
         formData.append('codigo_barras', product.codigo_barras);
+        const uriParts = product.imagen.split('/');
+        const imageName = uriParts[uriParts.length - 1];
         formData.append('imagen', {
             uri: product.imagen,
-            name: 'imagen.jpg',
+            name: imageName,
             type: 'image/jpeg',
         });
 
@@ -108,25 +113,25 @@ export const updateProduct = async (productId, updatedData) => {
             formData.append(`variantes[${index}][precio]`, variante.precio.toString());
         });
 
-        console.log("formData 😹", formData);
-        
-        const response = await fetch(`${BASE_URL}/product`, {
+        const headers = {
+            Authorization: `Bearer ${token}`,
+        };
+
+        const response = await fetch(`${BASE_URL}/add`, {
             method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}` ,
-                'Content-Type': 'multipart/form-data'
-            },
-            body: formData,
+            headers: headers,
+            body: formData, // Usar formData en lugar de un objeto JSON
         });
-    
-        console.log("response", response);
-    
-        const data = await response.json(); 
+
+        const data = await response.json();
         console.log('Product created:', data);
-        return data; 
+        return data;
+
     } catch (error) {
         console.error('Error creating product:', error);
         throw error;
     }
 };
 
+
+ 
