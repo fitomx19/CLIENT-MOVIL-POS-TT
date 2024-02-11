@@ -23,7 +23,7 @@ const ListaProductos = ({ products }) => {
     const navigateToDetails = () => {
       navigation.navigate('PedidoDetalleScreen', { producto: item });
     };
-
+    console.log('Variante:', item);
     return (
       <TouchableOpacity onPress={navigateToDetails}>
         <Card style={listaProductosStyles.card}>
@@ -32,7 +32,13 @@ const ListaProductos = ({ products }) => {
             <View style={listaProductosStyles.textContainer}>
               <Text style={listaProductosStyles.productName}>{item.nombre}</Text>
               <Text style={listaProductosStyles.productDescription}>{item.descripcion}</Text>
-              <Text style={listaProductosStyles.productPrice}>Existencias: {item.existencias}</Text>
+                {
+                  item.variantes.map((variante, index) => (
+                    <Text key={index} style={listaProductosStyles.productDescription}>
+                      {variante.nombre} - ${variante.precio} - {variante.existencias} disponibles
+                    </Text>
+                  ))
+                }
             </View>
           </View>
         </Card>
