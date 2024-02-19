@@ -1,5 +1,3 @@
-
-
 import { View, Text, Switch, TextInput, Pressable, Alert, ScrollView, TouchableOpacity , Modal} from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { createProduct } from './ProductosScreenService';

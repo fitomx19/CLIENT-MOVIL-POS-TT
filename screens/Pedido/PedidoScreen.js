@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Image, TextInput } from 'react-native';
+import { View, FlatList, StyleSheet, Text, Image, TextInput , Modal, Pressable } from 'react-native';
 import Total from './components/Total';
-import { getProducts } from '../Productos/ProductosScreenService'; 
+import { getProductsFiltered } from '../Productos/ProductosScreenService'; 
 import ListaProductos from './components/ListaProductos';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import moment from 'moment-timezone';
+import { Camera } from "expo-camera";
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const PedidosAddScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]); 
   const [total, setTotal] = useState(0); 
   const [searchQuery, setSearchQuery] = useState('');
+  const [scanned, setScanned] = useState(false);
+  const [userEscaner, setUserEscaner] = useState(false);
+
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    setUpdatedProduct({ ...producto, codigo_barras: data });
+    alert(`Se escaneo un codigo de barras tipo ${type} con el serial ${data}!`);
+    setUserEscaner(false);
+  };
+
 
   const fetchProducts = async () => {
     try {
-      let productsData = await getProducts();
+      let productsData = await getProductsFiltered();
+      
       setProducts(productsData);
     } catch (error) {
       console.error('Error en carga de productos:', error.message);
@@ -55,12 +69,17 @@ const PedidosAddScreen = ({ navigation }) => {
   return (
     <>
       <Total total={total} setTotal={setTotal}/>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <TextInput
-        style={styles.input}
+        style={{ flex: 1, height: 40, borderColor: 'gray', borderWidth: 1, paddingHorizontal: 20 , marginLeft: 10}}
         placeholder="Buscar productos"
         onChangeText={(text) => setSearchQuery(text)}
         value={searchQuery}
       />
+      <Pressable onPress={() => console.log("Escanear")}>
+        <Icon name="barcode" size={20} color="black" style={{ marginLeft: 20 , marginRight:20}} />
+      </Pressable>
+    </View>
       {filteredProducts.length > 0 ? (
         <ListaProductos products={filteredProducts} />
       ) : (
@@ -74,6 +93,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: 'gray',
+    borderRadius: 20,
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,

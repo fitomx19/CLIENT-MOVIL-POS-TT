@@ -75,11 +75,11 @@ const ProductScreen = ({ navigation }) => {
       <View style={styles.productContainer}>
          <Card containerStyle={styles.cardContainer} >
           <Image source={productImage} style={styles.productImage} />
-          <Text style={styles.productTitle}>{item.nombre}</Text>
+          <Text style={{fontWeight:700}}>{item.nombre}</Text>
           <Text style={styles.productDescription}>{item.descripcion}</Text>
           <Text style={{ color: statusColor }}>{item.activo ? 'Activo' : 'Inactivo'}</Text>
 
-          <FlatList
+          {/* <FlatList
             data={item.variantes}
             keyExtractor={(variante) => variante._id}
             renderItem={({ item: variante }) => (
@@ -89,7 +89,7 @@ const ProductScreen = ({ navigation }) => {
                 <Text style={styles.variantInfo}>Precio: ${variante.precio}</Text>
               </ListItem>
             )}
-          />
+          /> */}
         </Card>
         <Button
           title="Ver detalles"
