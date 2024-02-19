@@ -32,7 +32,13 @@ const styles = StyleSheet.create({
     },
     label: {
       fontSize: 16,
+      fontWeight: '500',
       marginBottom: 8,
+    },
+    variantesText:{
+        fontSize: 16,
+        fontWeight: '300',
+        marginBottom: 8,
     },
     button: {
       alignItems: 'center',
@@ -72,6 +78,17 @@ const styles = StyleSheet.create({
       marginBottom: 16,
       marginTop: 16,
     },
+    buttonred: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 32,
+        borderRadius: 4,
+        elevation: 3,
+        backgroundColor: 'red',
+        marginBottom: 16,
+        marginTop: 16,
+      },
     buttongreen: {
       alignItems: 'center',
       justifyContent: 'center',

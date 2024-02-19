@@ -1,5 +1,5 @@
-import React, {useState,useEffect} from 'react';
-import { View, FlatList, Text, Image, StyleSheet,TouchableOpacity  } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';  
 import { listaProductosStyles } from '../styles/ListaProductosStyles';  
@@ -13,17 +13,12 @@ const ListaProductos = ({ products }) => {
     setSortedProducts(sorted);
   }, [products]);
 
-  const renderProduct = ({ item }) => {
-    //console.log('URL de la imagen:', item.imagen);
-
-    const productImage = item.imagen
-      ? { uri: "https://storage.googleapis.com/productos_pos_plus/1707449165831-51c1e53115a38b9ada4330dfbe5c7890.jpg" }
-      : { uri: 'https://ibarramayoreo.com/detalle/images/iconos/no-encontrado.png' };
+  const renderProduct = ({ item }) => {  
 
     const navigateToDetails = () => {
       navigation.navigate('PedidoDetalleScreen', { producto: item });
     };
-    console.log('Variante:', item);
+    
     return (
       <TouchableOpacity onPress={navigateToDetails}>
         <Card style={listaProductosStyles.card}>
@@ -32,13 +27,7 @@ const ListaProductos = ({ products }) => {
             <View style={listaProductosStyles.textContainer}>
               <Text style={listaProductosStyles.productName}>{item.nombre}</Text>
               <Text style={listaProductosStyles.productDescription}>{item.descripcion}</Text>
-                {
-                  item.variantes.map((variante, index) => (
-                    <Text key={index} style={listaProductosStyles.productDescription}>
-                      {variante.nombre} - ${variante.precio} - {variante.existencias} disponibles
-                    </Text>
-                  ))
-                }
+            
             </View>
           </View>
         </Card>

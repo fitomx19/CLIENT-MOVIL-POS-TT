@@ -1,19 +1,10 @@
 import React, { useEffect } from 'react';
-import { Button, Icon, Grid, Row } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PedidosList from './components/PedidosList';
-
-import {
-  SafeAreaView,
-  View,
-  FlatList,
-  StyleSheet,
-  Text,
-  StatusBar,
-} from 'react-native';
+import { View, FlatList, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import styles from '../../global.css.js';
-
 
 const MenuScreen = ({ navigation }) => {
   const handleLogout = async () => {
@@ -28,17 +19,12 @@ const MenuScreen = ({ navigation }) => {
 
   const handleCorteCaja = async () => {
     await AsyncStorage.removeItem('subpedido');
-    //crear alerta con el total de ventas
     alert('Corte de caja realizado con éxito');
-  }
+  };
 
   const handleCheckToken = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      //descomponer el token
-
-      
-
       if (!token) {
         navigation.navigate('LoginScreen');
       }
@@ -49,41 +35,44 @@ const MenuScreen = ({ navigation }) => {
 
   useEffect(() => {
     handleCheckToken();
-  }, []);  
+  }, []);
 
   return (
     <View style={styles.container}>
-      <View style={{marginVertical:30}}/>
+      <View style={{ marginVertical: 30 }} />
       <Text style={styles.title}>Menú</Text>
       <Text style={styles.subtitle}>Restaurante los cacomixtles</Text>
       <FlatList
         data={[
-          { key: 'Crear pedido', action: () => navigation.navigate('PedidosScreen') },
-          { key: 'Administrar Inventario', action: () => navigation.navigate('ProductScreen') },
-          { key: 'Crear producto | Categoría', action: () => navigation.navigate('ProductosAddScreen') },
-          { key: 'Revisar pedidos', action: () => navigation.navigate('RevisarPedidosScreen') },
-          { key: 'Corte de Caja', action: handleCorteCaja },
-          { key: 'Cerrar sesion', action: handleLogout },
+          { key: 'Crear pedido', icon: 'cart-plus', action: () => navigation.navigate('PedidosScreen'), description: 'Crear un nuevo pedido' },
+          { key: 'Administrar Inventario', icon: 'list-alt', action: () => navigation.navigate('ProductScreen'), description: 'Administrar el inventario de productos' },
+          { key: 'Crear producto | Categoría', icon: 'plus-square', action: () => navigation.navigate('ProductosAddScreen'), description: 'Agregar un nuevo producto o categoría' },
+          { key: 'Revisar pedidos', icon: 'list', action: () => navigation.navigate('RevisarPedidosScreen'), description: 'Revisar los pedidos realizados' },
+          { key: 'Corte de Caja', icon: 'money', action: handleCorteCaja, description: 'Realizar un corte de caja' },
+          { key: 'Cerrar sesión', icon: 'sign-out', action: handleLogout, description: 'Cerrar sesión y salir de la aplicación' },
         ]}
         numColumns={2}
         renderItem={({ item }) => (
           <View style={styles.buttonContainer}>
             <Button
-              title={item.key}
+              icon={<Icon name={item.icon} size={30} color="white" />}
               onPress={item.action}
               buttonStyle={[
                 styles.button,
                 {
-                  backgroundColor: 'forestgreen', // Color verde forestal
+                  backgroundColor: 'forestgreen',
                   width: 150,
                   height: 75,
                   margin: 10,
                 },
               ]}
+              
+              titleStyle={{ fontSize: 14, textAlign: 'center' }}
             />
+            <Text style={{ fontSize: 12, textAlign: 'center', color: 'gray' }}>{item.description}</Text>
           </View>
         )}
-        keyExtractor={item => item.key}
+        keyExtractor={(item) => item.key}
       />
     </View>
   );
@@ -92,6 +81,5 @@ const MenuScreen = ({ navigation }) => {
 MenuScreen.navigationOptions = {
   headerLeft: () => null,
 };
-
 
 export default MenuScreen;

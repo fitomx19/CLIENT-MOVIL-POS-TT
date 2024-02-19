@@ -9,6 +9,8 @@ import { Camera } from "expo-camera";
 import styles from './ProductosAddScreen.style';
 import { Button } from 'react-native-elements';
 import * as MediaLibrary from 'expo-media-library';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Por ejemplo, para usar iconos de FontAwesome
+
 
 const ProductosAddScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -132,7 +134,7 @@ const ProductosAddScreen = ({ navigation }) => {
                 setUpdatedProduct({ ...producto, descripcion: text })
               }
             />
-            <Text style={styles.label}>Imagen para el producto:</Text>
+            <Text style={styles.label}>Selecciona o toma una foto:</Text>
             {producto.imagen && (
             <Image
               source={{ uri: producto.imagen }}
@@ -140,15 +142,17 @@ const ProductosAddScreen = ({ navigation }) => {
             />
           )}
               
-              <View style={styles.barcodeContainer}>
-            <Pressable style={styles.button} onPress={() => setShowCamera(true)}>
-              <Text>Tomar Foto</Text>
-            </Pressable>
-          </View>
-             
-          <Pressable style={styles.button} onPress={pickImage}>
-            <Text>Seleccionar Imagen</Text>
-          </Pressable>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Pressable style={styles.buttongreen} onPress={() => setShowCamera(true)}>
+                    <Icon name="camera" size={20} color="white" />
+                  </Pressable>
+                  
+                  <Pressable style={styles.buttongreen} onPress={pickImage}>
+                    <Icon name="image" size={20} color="white" />
+                  </Pressable>
+                </View>
+
+
           
 
             <Text style={styles.label}>Codigo de Barras:</Text>
@@ -163,31 +167,48 @@ const ProductosAddScreen = ({ navigation }) => {
             ) : (
               <></>
             )}
-            <Button title="Escanear" onPress={() => setUserEscaner(true)} />
-            {producto.codigo_barras && ( <Text>Código de barras: {producto.codigo_barras}</Text>) }
+            <Pressable style={styles.buttongreen} onPress={() => setUserEscaner(true)}>
+              <Icon name="barcode" size={20} color="white" />
+            </Pressable>
+            {
+              userEscaner ? (
+                <Pressable style={styles.buttonred} onPress={() => setUserEscaner(false)}>
+                  <Text style={styles.text}>Cancelar</Text>
+                </Pressable>
+              ) : (
+                <></>
+              )
+            }
+
+            {producto.codigo_barras && ( <Text >Código de barras: {producto.codigo_barras}</Text>) }
 
 
+            <View style={styles.switchContainer}>
             <Text style={styles.label}>Perecedero:</Text>
-            <Switch
-              trackColor={{ false: "#767577", true: "#81b0ff" }}
-              thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() =>
-                setUpdatedProduct({
-                  ...producto,
-                  perecedero: !producto.perecedero,
-                  isEnabled: !isEnabled,
-                })
-              }
-              value={producto.perecedero}
-            />
+            <View style={[styles.switchRow, { flexDirection: 'row', alignItems: 'center' }]}>
+              <Switch
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={() => setUpdatedProduct({ ...producto, perecedero: !producto.perecedero, isEnabled: !isEnabled })}
+                value={producto.perecedero}
+              />
+              <Text style={styles.switchText}>
+                {producto.perecedero ? 'Perecedero' : 'No Perecedero'}
+              </Text>
+            </View>
+          </View>
 
-            <Text style={styles.label}>Variantes:</Text>
+
+
+
+
+            <Text style={styles.label}>Crea tus variantes:</Text>
             <View style={styles.variantContainer}>
               {producto.variantes.map((variante, index) => (
                 <View key={index} style={styles.variantSection}>
-                  <Text style={styles.label}>Variante {index + 1}</Text>
-                  <Text style={styles.label}>Nombre:</Text>
+                  <Text style={styles.variantesText}>Variante {index + 1}</Text>
+                  <Text style={styles.variantesText}>Nombre:</Text>
                   <TextInput
                     style={styles.input}
                     value={variante.nombre}
@@ -200,7 +221,7 @@ const ProductosAddScreen = ({ navigation }) => {
                       }))
                     }
                   />
-                  <Text style={styles.label}>Precio:</Text>
+                  <Text style={styles.variantesText}>Precio:</Text>
                   <TextInput
                     style={styles.input}
                     value={variante.precio.toString()}
@@ -214,7 +235,7 @@ const ProductosAddScreen = ({ navigation }) => {
                       }))
                     }
                   />
-                  <Text style={styles.label}>Existencias:</Text>
+                  <Text style={styles.variantesText}>Existencias:</Text>
                   <TextInput
                     style={styles.input}
                     value={variante.existencias.toString()}
