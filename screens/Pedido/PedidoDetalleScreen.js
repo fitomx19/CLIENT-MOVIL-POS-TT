@@ -77,7 +77,7 @@ const handleEliminarVariante = (id) => {
     <ListItem containerStyle={pedidoDetalleStyles.variantContainer}>
       <View style={pedidoDetalleStyles.variantContent}>
         <Text style={pedidoDetalleStyles.variantName}>{item.nombre}</Text>
-        <Text style={pedidoDetalleStyles.variantInfo}>Existencias: {item.existencias}</Text>
+        <Text style={pedidoDetalleStyles.variantInfo}>Código de barrasa: {item.codigo_barras}</Text>
         <Text style={pedidoDetalleStyles.variantInfo}>Precio: ${item.precio}</Text>
       </View>
       <View style={pedidoDetalleStyles.buttonsContainer}>
@@ -126,7 +126,7 @@ const handleEliminarVariante = (id) => {
         <>
           <Text style={pedidoDetalleStyles.productName}>{producto.nombre}</Text>
           <Text style={pedidoDetalleStyles.productDescription}>{producto.descripcion}</Text>
-          <Text style={pedidoDetalleStyles.productInfo}>Existencias: {producto.existencias}</Text>
+          {producto.codigo_barras && (<Text style={pedidoDetalleStyles.variantInfo}>Código de barras: {producto.codigo_barras}</Text>)}
           <Text style={pedidoDetalleStyles.sectionTitle}>Variaciones:</Text>
         </>
       }

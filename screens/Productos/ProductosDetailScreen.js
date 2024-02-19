@@ -52,9 +52,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
           <Text style={styles.detailText}>
             Descripción: {product.descripcion}
           </Text>
-          <Text style={styles.detailText}>
-            Existencias: {product.existencias}
+          {
+            product.codigo_barras ? (
+              <Text style={styles.detailText}>
+            Codigo de Barras: {product.codigo_barras}
           </Text>
+            ) : (<Text>No tiene código de barras</Text>)
+          }
           <Text style={styles.detailText}>
             Estado: {isActive ? "Activo" : "Inactivo"}
           </Text>

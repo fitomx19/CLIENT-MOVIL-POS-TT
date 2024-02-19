@@ -1,9 +1,9 @@
 // App.js
 
-import React from 'react';
+import React, {useState,useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import * as MediaLibrary from 'expo-media-library';
 import LoginScreen from './screens/Auth/LoginScreen';
 import MenuScreen from './screens/Menu/MenuScreen';
 import ProductScreen from './screens/Productos/ProductosScreen';
@@ -14,10 +14,23 @@ import PedidoDetalleScreen from './screens/Pedido/PedidoDetalleScreen';
 import PagoScreen from './screens/Pago/PagoScreen';
 import RevisarPedidosScreen from './screens/Pedido/RevisarPedidosScreen';
 import RevisarPedidosDetalleScreen from './screens/Pedido/RevisarPedidosDetalleScreen';
+import { Camera, CameraType } from 'expo-camera';
 
 const Stack = createStackNavigator();
 
 const App = () => {
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+
+  useEffect(() => { 
+    (async () => {
+      MediaLibrary.requestPermissionsAsync();
+      const cameraStatus = await Camera.requestPermissionsAsync(); 
+      setHasCameraPermission(cameraStatus.status === 'granted');
+    })();
+  }
+  , []);
+
+  console.log(hasCameraPermission);
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">

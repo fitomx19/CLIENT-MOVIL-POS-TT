@@ -12,9 +12,20 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow API POS to access camera."
+        }
+      ],
+      [
+        "expo-barcode-scanner",
+        {
+          "barCodeScannerPermission": "Allow API POS to access camera."
+        }
       ]
     ],
-    
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
