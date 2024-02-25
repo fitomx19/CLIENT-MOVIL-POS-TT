@@ -1,7 +1,6 @@
 import { productos } from "../../enviroment";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-
+ 
 
 const BASE_URL = productos + 'product';
 

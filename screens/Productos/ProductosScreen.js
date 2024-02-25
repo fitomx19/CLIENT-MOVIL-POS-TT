@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text,Image } from 'react-native'; 
+import { View, FlatList, StyleSheet, Text, Image, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProducts } from './ProductosScreenService';
-import styles from '../../global.css.js';
-import { Card, ListItem ,Button} from 'react-native-elements';
+import { Card, Button } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import styles from './ProductosScreen.style';
 
 const ProductScreen = ({ navigation }) => {
-
   const [products, setProducts] = useState([]);
-  const [sortOrder, setSortOrder] = useState('asc');  
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [showOnlyActive, setShowOnlyActive] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const navigateToProductDetail = (product) => {
-    console.log('Product:', product);
-    navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts()  });
-  };
-
- 
+  useEffect(() => {
+    handleCheckToken();
+    fetchProducts();
+  }, []);
 
   const handleCheckToken = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-
       if (!token) {
         navigation.navigate('LoginScreen');
       }
@@ -29,67 +28,42 @@ const ProductScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    handleCheckToken();
-  }, []);
-
-
   const fetchProducts = async () => {
     try {
       let productsData = await getProducts();
-
-      // Sort products based on the current sort order
       productsData = productsData.sort((a, b) => {
         const nameA = a.nombre.toUpperCase();
         const nameB = b.nombre.toUpperCase();
-
-        if (sortOrder === 'asc') {
-          return nameA.localeCompare(nameB);
-        } else {
-          return nameB.localeCompare(nameA);
-        }
+        return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
       });
-
       setProducts(productsData);
     } catch (error) {
-      // Handle error
+      console.error('Error al obtener productos:', error);
     }
   };
 
   const handleSortPress = () => {
-    // Toggle sort order when the button is pressed
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
-    fetchProducts(); // Re-fetch products with the new sort order
-  };
-
-  useEffect(() => {
     fetchProducts();
-  }, []);
+  };
 
   const renderItem = ({ item }) => {
     const productImage = item.imagen ? { uri: item.imagen } : { uri: 'https://ibarramayoreo.com/detalle/images/iconos/no-encontrado.png' };
     const statusColor = item.activo ? 'green' : 'red';
 
+    const navigateToProductDetail = (product) => {
+      console.log('Product:', product);
+      navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts() });
+    };
+    
     return (
       <View style={styles.productContainer}>
-         <Card containerStyle={styles.cardContainer} >
+        <Card containerStyle={styles.cardContainer}>
           <Image source={productImage} style={styles.productImage} />
-          <Text style={{fontWeight:700}}>{item.nombre}</Text>
+          <Text style={styles.title}>{item.nombre}</Text>
           <Text style={styles.productDescription}>{item.descripcion}</Text>
           <Text style={{ color: statusColor }}>{item.activo ? 'Activo' : 'Inactivo'}</Text>
-
-          {/* <FlatList
-            data={item.variantes}
-            keyExtractor={(variante) => variante._id}
-            renderItem={({ item: variante }) => (
-              <ListItem>
-                <Text style={styles.variantName}>{variante.nombre}</Text>
-                <Text style={styles.variantInfo}>Existencias: {variante.existencias}</Text>
-                <Text style={styles.variantInfo}>Precio: ${variante.precio}</Text>
-              </ListItem>
-            )}
-          /> */}
         </Card>
         <Button
           title="Ver detalles"
@@ -100,19 +74,39 @@ const ProductScreen = ({ navigation }) => {
     );
   };
 
+  const filteredProducts = products.filter(product =>
+    product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.title}>Productos en inventario</Text>
- 
-      <Button
-        title={`Ordenar los productos ${sortOrder === 'asc' ? 'Descendente' : 'Ascendente'}`}
-        onPress={handleSortPress}
-        buttonStyle={styles.button2}
+      <View style={styles.buttonContainer}>
+        <Icon
+          name={sortOrder === 'asc' ? 'sort-amount-asc' : 'sort-amount-desc'}
+          size={30}
+          color="black"
+          onPress={handleSortPress}
+          style={styles.iconButton}
+        />
+        <View style={styles.filterContainer}>
+          <Icon
+            name={showOnlyActive ? 'toggle-on' : 'toggle-off'}
+            size={30}
+            color={showOnlyActive ? 'green' : 'red'}
+            onPress={() => setShowOnlyActive(!showOnlyActive)}
+          />
+          <Text style={styles.filterText}>Mostrar solo activos</Text>
+        </View>
+      </View>
+      <TextInput
+        style={styles.searchInput}
+        value={searchTerm}
+        onChangeText={text => setSearchTerm(text)}
+        placeholder="Buscar productos..."
+        placeholderTextColor="gray"
       />
-
       <FlatList
-        data={products}
+        data={filteredProducts}
         keyExtractor={(product) => product._id}
         renderItem={renderItem}
       />
