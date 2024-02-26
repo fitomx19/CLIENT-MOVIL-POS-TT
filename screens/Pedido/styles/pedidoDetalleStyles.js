@@ -39,6 +39,7 @@ export const pedidoDetalleStyles = StyleSheet.create({
     marginBottom: 5,
   },
   variantInfo: {
+    fontSize: 12,
     marginBottom: 5,
   },
   buttonsContainer: {
