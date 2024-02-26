@@ -26,7 +26,7 @@ const handleLogin = async (data) => {
       throw new Error(`Error en la solicitud: ${response.status}`);
     }
 
-    const token = responseData.token;
+    const token = responseData;
 
     return token;
   } catch (error) {

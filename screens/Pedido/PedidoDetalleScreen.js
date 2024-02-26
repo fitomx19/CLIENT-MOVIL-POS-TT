@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ListItem, Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';

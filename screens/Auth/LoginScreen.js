@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, ImageBackground, Alert } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import handleLogin from './LoginScreenService';
+import styles from './LoginScreen.style';
 
 
 const LoginScreen = () => {
@@ -13,10 +14,16 @@ const LoginScreen = () => {
 
   const handlePostLogin = async () => {
     try {
-      const token = await handleLogin({ "username": email, "password": password });
+      const respuesta = await handleLogin({ "username": email, "password": password });
+      console.log('Respuesta:', respuesta);
 
-      if (token) {
-        await AsyncStorage.setItem('token', token);
+
+
+      if (respuesta.token) {
+        await AsyncStorage.setItem('token', respuesta.token);
+        await AsyncStorage.setItem('role',  (respuesta.user.role));
+        await AsyncStorage.setItem('tienda',  (respuesta.user.tienda));
+      
         navigation.navigate('MenuScreen');
       }
     } catch (error) {
@@ -56,37 +63,6 @@ const LoginScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add an overlay for better readability
-    width: '100%',
-    padding: 20,
-  },
-  title: {
-    fontSize: 18,
-    marginBottom: 16,
-    color: 'white', // Set text color to white
-  },
-  titlePlus:{
-    fontSize: 24,
-    marginBottom: 16,
-    textAlign: 'center',
-    color: 'white', // Set text color to white
-  },
-  input: {
-    height: 40,
-    width: '100%',
-    borderColor: 'white', // Set border color to white
-    borderWidth: 1,
-    marginBottom: 16,
-    paddingHorizontal: 10,
-    color: 'white', // Set text color to white
-  },
-});
+
 
 export default LoginScreen;

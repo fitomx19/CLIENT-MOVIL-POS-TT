@@ -44,8 +44,9 @@ const PagoScreen = ({ route }) => {
       precio: item.precio_unitario,
       variante: item._id,
     }));
-
+    const tienda = await AsyncStorage.getItem('tienda');
     const orderData = {
+      id_tienda: tienda,
       pedido: jsonPedido,
       paymentMethod,
       comments,
