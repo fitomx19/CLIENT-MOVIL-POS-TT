@@ -8,6 +8,7 @@ export const getProducts = async () => {
   try {
     // Obtener el token JWT almacenado en AsyncStorage
     const token = await AsyncStorage.getItem('token');
+    const tienda = await AsyncStorage.getItem('tienda');
 
     // Configurar los encabezados de la solicitud con el token JWT
     const headers = {
@@ -16,7 +17,7 @@ export const getProducts = async () => {
     };
 
     // Realizar la solicitud con los encabezados configurados
-    const response = await fetch(BASE_URL, {
+    const response = await fetch(BASE_URL+'/tienda/' + tienda, {
       method: 'GET',
       headers: headers,
     });
@@ -35,6 +36,7 @@ export const getProductsFiltered = async () => {
   try {
     // Obtener el token JWT almacenado en AsyncStorage
     const token = await AsyncStorage.getItem('token');
+    const tienda = await AsyncStorage.getItem('tienda');
 
     // Configurar los encabezados de la solicitud con el token JWT
     const headers = {
@@ -43,7 +45,7 @@ export const getProductsFiltered = async () => {
     };
 
     // Realizar la solicitud con los encabezados configurados
-    const response = await fetch(BASE_URL, {
+    const response = await fetch(BASE_URL+'/tienda/' + tienda, {
       method: 'GET',
       headers: headers,
     });
@@ -122,11 +124,14 @@ export const updateProduct = async (productId, updatedData) => {
 
         const formData = new FormData();
 
+        let tienda = await AsyncStorage.getItem('tienda');
+
         // Agregar cada parámetro al FormData
         formData.append('nombre', product.nombre);
         formData.append('descripcion', product.descripcion);
         formData.append('perecedero', product.perecedero.toString()); // Convertir a cadena
         formData.append('codigo_barras', product.codigo_barras);
+        formData.append('tienda_id', tienda);
         const uriParts = product.imagen.split('/');
         const imageName = uriParts[uriParts.length - 1];
         formData.append('imagen', {

@@ -5,8 +5,7 @@ import { Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera } from "expo-camera";
 import styles from './ProductosAddScreen.style';
-import { Button } from 'react-native-elements';
-import * as MediaLibrary from 'expo-media-library';
+import { Button } from 'react-native-elements'; 
 import Icon from 'react-native-vector-icons/FontAwesome'; // Por ejemplo, para usar iconos de FontAwesome
 
 
@@ -19,16 +18,14 @@ const ProductosAddScreen = ({ navigation }) => {
     imagen: null,
     perecedero: false,
     codigo_barras: null,
-    variantes: [],
+    variantes: []
   });
 
   const cameraRef = useRef(null);
   const [showCamera, setShowCamera] = useState(false); // Estado para controlar la visibilidad de la cámara
 
   const [isEnabled, setIsEnabled] = useState(false);
-  const [userEscaner, setUserEscaner] = useState(false);
-  const [type, setType] = useState(Camera.Constants.Type.back); 
-  const [flash, setFlash] = useState(Camera.Constants.FlashMode.on);
+  const [userEscaner, setUserEscaner] = useState(false); 
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -56,18 +53,7 @@ const ProductosAddScreen = ({ navigation }) => {
       }
     }
   };
-
-  const saveImage = async () => {
-    if (producto.codigo_barras) {
-      try {
-        await MediaLibrary.createAssetAsync(producto.codigo_barras);
-        alert("Foto guardada correctamente")
-        setUpdatedProduct({ ...producto, codigo_barras: null })
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  };
+ 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -87,6 +73,7 @@ const ProductosAddScreen = ({ navigation }) => {
     try {  
       const newProduct = {
         ...producto,
+
         imagen: producto.imagen  
       }; 
       await createProduct(newProduct); 
