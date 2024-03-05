@@ -1,29 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Image, TextInput , Modal, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, FlatList, StyleSheet, Text, Image, TextInput , Pressable,Button } from 'react-native';
 import Total from './components/Total';
-import { getProductsFiltered } from '../Productos/ProductosScreenService'; 
+import { getProductsFiltered, enviarImagen } from '../Productos/ProductosScreenService'; 
 import ListaProductos from './components/ListaProductos';
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
-import moment from 'moment-timezone';
-import { Camera } from "expo-camera";
+import moment from 'moment-timezone'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { Camera } from "expo-camera";
 
 const PedidosAddScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]); 
   const [total, setTotal] = useState(0); 
   const [searchQuery, setSearchQuery] = useState('');
-  const [scanned, setScanned] = useState(false);
   const [userEscaner, setUserEscaner] = useState(false);
-
-
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const cameraRef = useRef(null);
   const handleBarCodeScanned = ({ type, data }) => {
     setUpdatedProduct({ ...producto, codigo_barras: data });
     alert(`Se escaneo un codigo de barras tipo ${type} con el serial ${data}!`);
     setUserEscaner(false);
   };
-
-
+ 
+  
   const fetchProducts = async () => {
     try {
       let productsData = await getProductsFiltered();
@@ -41,6 +39,7 @@ const PedidosAddScreen = ({ navigation }) => {
       await AsyncStorage.setItem('hora_inicio', horaInicioDate);
       const hora_inicio = await AsyncStorage.getItem('hora_inicio');
       console.log('Hora de inicio guardada:', hora_inicio);
+      
     };
     fetchData();
   }, []); 
@@ -66,6 +65,40 @@ const PedidosAddScreen = ({ navigation }) => {
 
   const filteredProducts = products.filter(product => product.nombre.toLowerCase().includes(searchQuery.toLowerCase()));
 
+
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      try {
+        const { uri } = await cameraRef.current.takePictureAsync();
+        console.log('Imagen capturada:', uri);
+        // Enviar la imagen al servidor Flask
+        enviarImagen(uri);
+        setIsCameraActive(false);
+      } catch (error) {
+        console.error('Error al capturar la imagen:', error);
+      }
+    }
+  };
+
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        console.log('Imagen seleccionada:', result.uri);
+        // Enviar la imagen al servidor Flask
+        enviarImagen(result.uri);
+      }
+    } catch (error) {
+      console.error('Error al seleccionar la imagen:', error);
+    }
+  };
+
   return (
     <>
       <Total total={total} setTotal={setTotal}/>
@@ -79,7 +112,20 @@ const PedidosAddScreen = ({ navigation }) => {
       <Pressable onPress={() => console.log("Escanear")}>
         <Icon name="barcode" size={20} color="black" style={{ marginLeft: 20 , marginRight:20}} />
       </Pressable>
+      <Pressable onPress={() => setIsCameraActive(true)}>
+      <Icon name="camera" size={20} color="black" style={{ marginLeft: 20 , marginRight:20}} />
+      </Pressable>
+     
+
+
     </View>
+      {isCameraActive && (
+        <View style={styles.cameraContainer}>
+          <Camera ref={cameraRef} style={styles.camera} type={Camera.Constants.Type.front} />
+          <Button title="Tomar foto" onPress={takePicture} />
+          <Button title="Cerrar cámara" onPress={() => setIsCameraActive(false)} />
+        </View>
+      )}
       {filteredProducts.length > 0 ? (
         <ListaProductos products={filteredProducts} />
       ) : (
@@ -98,6 +144,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  camera: {
+    flex: 1,
+  }
 });
 
 export default PedidosAddScreen;

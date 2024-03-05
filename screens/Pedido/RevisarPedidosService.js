@@ -38,3 +38,4 @@ export const getVentas = async () => {
     throw error;
   }
 };
+
