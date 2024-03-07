@@ -1,37 +1,58 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, FlatList, StyleSheet, Text, Image, TextInput , Pressable,Button } from 'react-native';
+import { View, FlatList, StyleSheet, Text, Image, TextInput, Pressable, Button, Alert } from 'react-native';
 import Total from './components/Total';
-import { getProductsFiltered, enviarImagen } from '../Productos/ProductosScreenService'; 
+import { getProductsFiltered, enviarImagen } from '../Productos/ProductosScreenService';
 import ListaProductos from './components/ListaProductos';
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
-import moment from 'moment-timezone'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Camera } from "expo-camera";
 
 const PedidosAddScreen = ({ navigation }) => {
-  const [products, setProducts] = useState([]); 
-  const [total, setTotal] = useState(0); 
+  const [products, setProducts] = useState([]);
+  const [total, setTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [userEscaner, setUserEscaner] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const cameraRef = useRef(null);
+
   const handleBarCodeScanned = ({ type, data }) => {
     setUpdatedProduct({ ...producto, codigo_barras: data });
-    alert(`Se escaneo un codigo de barras tipo ${type} con el serial ${data}!`);
+    alert(`Se escaneo un código de barras tipo ${type} con el serial ${data}!`);
     setUserEscaner(false);
   };
- 
-  
+
   const fetchProducts = async () => {
     try {
       let productsData = await getProductsFiltered();
-      
+
       setProducts(productsData);
     } catch (error) {
       console.error('Error en carga de productos:', error.message);
-    } 
+    }
   };
 
+  useEffect(() => {
+    const takeAndSendPicture = async () => {
+      if (cameraRef.current) {
+        try {
+          const { uri } = await cameraRef.current.takePictureAsync();
+          console.log('Imagen capturada:', uri);
+          // Enviar la imagen al servidor Flask
+          const resultado = await enviarImagen(uri); 
+          Alert.alert(`Nivel de estres: ${resultado.emocion_predominante} , Coefiente de confianza: ${resultado.promedio_coeficientes} , Emocion predominante: ${resultado.emocion_predominante}`);
+          setIsCameraActive(false);
+        } catch (error) {
+          console.error('Error al capturar la imagen:', error);
+        }
+      }
+    };
+  
+    // Llamar a la función para tomar y enviar la foto al cargar la pantalla
+    takeAndSendPicture();
+  }, []);
+
+  
   useEffect(() => {
     const fetchData = async () => {
       await fetchProducts();
@@ -39,12 +60,16 @@ const PedidosAddScreen = ({ navigation }) => {
       await AsyncStorage.setItem('hora_inicio', horaInicioDate);
       const hora_inicio = await AsyncStorage.getItem('hora_inicio');
       console.log('Hora de inicio guardada:', hora_inicio);
-      
+
     };
     fetchData();
-  }, []); 
+  }, []);
 
   useEffect(() => {
+
+
+
+
     const cargarDesdeAsyncStorage = async () => {
       try {
         const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -60,11 +85,16 @@ const PedidosAddScreen = ({ navigation }) => {
     const unsubscribe = navigation.addListener('focus', () => {
       cargarDesdeAsyncStorage();
     });
+
+     //usar takePictureAsync para tomar la foto
+     takePicture() 
     return unsubscribe;
-  }, [navigation]); 
+
+   
+
+  }, [navigation]);
 
   const filteredProducts = products.filter(product => product.nombre.toLowerCase().includes(searchQuery.toLowerCase()));
-
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -72,7 +102,8 @@ const PedidosAddScreen = ({ navigation }) => {
         const { uri } = await cameraRef.current.takePictureAsync();
         console.log('Imagen capturada:', uri);
         // Enviar la imagen al servidor Flask
-        enviarImagen(uri);
+        const resultado = await enviarImagen(uri); 
+        Alert.alert(`Nivel de estres: ${resultado.emocion_predominante} , Coefiente de confianza: ${resultado.promedio_coeficientes} , Emocion predominante: ${resultado.emocion_predominante}`);
         setIsCameraActive(false);
       } catch (error) {
         console.error('Error al capturar la imagen:', error);
@@ -80,45 +111,23 @@ const PedidosAddScreen = ({ navigation }) => {
     }
   };
 
-  const pickImage = async () => {
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-
-      if (!result.cancelled) {
-        console.log('Imagen seleccionada:', result.uri);
-        // Enviar la imagen al servidor Flask
-        enviarImagen(result.uri);
-      }
-    } catch (error) {
-      console.error('Error al seleccionar la imagen:', error);
-    }
-  };
-
   return (
     <>
-      <Total total={total} setTotal={setTotal}/>
+      <Total total={total} setTotal={setTotal} />
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <TextInput
-        style={{ flex: 1, height: 40, borderColor: 'gray', borderWidth: 1, paddingHorizontal: 20 , marginLeft: 10}}
-        placeholder="Buscar productos"
-        onChangeText={(text) => setSearchQuery(text)}
-        value={searchQuery}
-      />
-      <Pressable onPress={() => console.log("Escanear")}>
-        <Icon name="barcode" size={20} color="black" style={{ marginLeft: 20 , marginRight:20}} />
-      </Pressable>
-      <Pressable onPress={() => setIsCameraActive(true)}>
-      <Icon name="camera" size={20} color="black" style={{ marginLeft: 20 , marginRight:20}} />
-      </Pressable>
-     
-
-
-    </View>
+        <TextInput
+          style={{ flex: 1, height: 40, borderColor: 'gray', borderWidth: 1, paddingHorizontal: 20, marginLeft: 10 }}
+          placeholder="Buscar productos"
+          onChangeText={(text) => setSearchQuery(text)}
+          value={searchQuery}
+        />
+        <Pressable onPress={() => console.log("Escanear")}>
+          <Icon name="barcode" size={20} color="black" style={{ marginLeft: 20, marginRight: 20 }} />
+        </Pressable>
+        <Pressable onPress={() => setIsCameraActive(true)}>
+          <Icon name="camera" size={20} color="black" style={{ marginLeft: 20, marginRight: 20 }} />
+        </Pressable>
+      </View>
       {isCameraActive && (
         <View style={styles.cameraContainer}>
           <Camera ref={cameraRef} style={styles.camera} type={Camera.Constants.Type.front} />

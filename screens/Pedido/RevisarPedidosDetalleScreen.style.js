@@ -4,27 +4,46 @@ const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: '#f8f8f8',
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#f8f8f8',
     },
     cardContainer: {
-      marginBottom: windowWidth * 0.015, // Reducimos el espacio entre las tarjetas
-      borderRadius: 8,
-      backgroundColor: '#fff',
-      elevation: 3,
-      padding: windowWidth * 0.02, // Reducimos el padding de la tarjeta principal
+        marginBottom: windowWidth * 0.015,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        elevation: 3,
+        padding: windowWidth * 0.02,
+        flexDirection: 'row', // Agregamos dirección de fila para la primera card
+        justifyContent: 'space-between', // Distribuye los elementos horizontalmente
+    },
+    twoColumns: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    column: {
+        flex: 1, // Hace que cada columna ocupe el mismo espacio
+        marginRight: windowWidth * 0.02, // Añade margen entre las columnas
+    },
+    productSection: {
+        backgroundColor: '#C9F3D7',
+        padding: windowWidth * 0.02,
+        marginTop: windowWidth * 0.015,
     },
     title: {
-      fontSize: windowWidth * 0.045,
-      fontWeight: 'bold',
-      marginBottom: windowWidth * 0.015, // Reducimos el espacio entre los títulos y los detalles
-      color: '#333',
+        fontSize: windowWidth * 0.045,
+        fontWeight: 'bold',
+        marginBottom: windowWidth * 0.015,
+        color: '#333',
     },
+    titleContainer: {
+        paddingTop: windowWidth * 0.015,
+        paddingBottom: windowWidth * 0.015,
+    },  
     detail: {
-      fontSize: windowWidth * 0.042,
-      color: '#666',
+        fontSize: windowWidth * 0.042,
+        color: '#666',
     },
-  });
+});
 
 export default styles;

@@ -12,6 +12,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
+  title2: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
   iconContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

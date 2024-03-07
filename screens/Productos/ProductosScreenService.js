@@ -10,6 +10,7 @@ export const getProducts = async () => {
     const token = await AsyncStorage.getItem('token');
     const tienda = await AsyncStorage.getItem('tienda');
 
+
     // Configurar los encabezados de la solicitud con el token JWT
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -26,6 +27,9 @@ export const getProducts = async () => {
  
     return data;
   } catch (error) {
+    //si hay un error de TokenExpiredError se redirige a la pantalla de login
+    
+
     console.error('Error fetching products:', error);
     throw error;
   }
@@ -178,7 +182,7 @@ export const enviarImagen = async (uri) => {
       name: 'photo.jpg',
     });
 
-    let response = await fetch('https://05d6-187-191-33-167.ngrok-free.app//cargar_imagenes', {
+    let response = await fetch('https://321b-187-191-33-167.ngrok-free.app//cargar_imagenes', {
       method: 'POST',
       body: formData,
       headers: {
@@ -187,9 +191,11 @@ export const enviarImagen = async (uri) => {
     });
 
     let data = await response.json();
+    return data;
     console.log('Respuesta del servidor:', data);
   } catch (error) {
     console.error('Error al subir la imagen:', error);
+
   }
 };
  

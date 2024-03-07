@@ -14,6 +14,7 @@ const PagoScreen = ({ route }) => {
   const [pedido, setPedido] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [comments, setComments] = useState('');
+  const [referencia, setReferencia] = useState('');
   const [cocina, setCocina] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null); // Estado para almacenar los datos decodificados del JWT
 
@@ -50,8 +51,16 @@ const PagoScreen = ({ route }) => {
       pedido: jsonPedido,
       paymentMethod,
       comments,
+      referencia,
       cocina
     };
+
+    //validar que paymentMethod no sea vacio
+    if (paymentMethod ==  "") {
+      alert('Selecciona un método de pago');
+      return;
+    }
+
     console.log('Pedido JSON:', orderData);
     try {
       const hora_inicio = await AsyncStorage.getItem('hora_inicio');
@@ -75,7 +84,7 @@ const PagoScreen = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.totalText}>Pantalla de Pago de un total de {total}</Text>
+      <Text style={styles.totalText}>Pantalla de Pago de un total de ${total}.00</Text>
       <View style={styles.orderContainer}>
         {pedido.map(item => (
           <View key={item._id} style={styles.orderItem}>
@@ -103,6 +112,19 @@ const PagoScreen = ({ route }) => {
         value={comments}
         onChangeText={text => setComments(text)}
       />
+     {
+        paymentMethod === 'transferencia' || paymentMethod === 'tarjeta' ? (
+         <> 
+          <Text> Referencia </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Referencia"
+              value={referencia}
+              onChangeText={text => setReferencia(text)}
+            />
+         </>
+        ) : null
+     }
       <Text style={{ marginTop: 10, marginBottom: 10 }}>¿Requiere Cocina?</Text>
       <Button
         title={cocina ? 'Sí' : 'No'}

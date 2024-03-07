@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ListItem, Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
@@ -76,6 +76,7 @@ const PedidoDetalleScreen = ({ route }) => {
   const renderVarianteItem = ({ item }) => (
     <ListItem containerStyle={pedidoDetalleStyles.variantContainer}>
       <View style={pedidoDetalleStyles.variantContent}>
+        
         <Text style={pedidoDetalleStyles.variantName}>{item.nombre}</Text>
         <Text style={pedidoDetalleStyles.variantInfo}>Cantidad disponible: {item.existencias}</Text>
         <Text style={pedidoDetalleStyles.variantInfo}>Código de barras: {item.codigo_barras}</Text>
@@ -120,37 +121,33 @@ const PedidoDetalleScreen = ({ route }) => {
   );
 
   return (
-    <FlatList
-      style={pedidoDetalleStyles.container}
-      ListHeaderComponent={
-        <>
-          <Text style={pedidoDetalleStyles.productName}>{producto.nombre}</Text>
-          <Text style={pedidoDetalleStyles.productDescription}>{producto.descripcion}</Text>
-          {producto.codigo_barras && (<Text style={pedidoDetalleStyles.variantInfo}>Código de barras: {producto.codigo_barras}</Text>)}
-          <Text style={pedidoDetalleStyles.sectionTitle}>Variaciones:</Text>
-        </>
-      }
-      data={producto.variantes}
-      keyExtractor={(item) => item._id}
-      renderItem={renderVarianteItem}
-      ListFooterComponent={
-        <>
-          <Text style={pedidoDetalleStyles.sectionTitle}>Subpedido:</Text>
-          <FlatList
-            data={subpedido}
-            keyExtractor={(item) => item._id}
-            renderItem={renderSubpedidoItem}
-          />
-          <TouchableOpacity
-            style={pedidoDetalleStyles.añadirButton}
-            onPress={handleAñadirPedido}
-          >
-            <Text style={pedidoDetalleStyles.añadirButtonText}>Añadir Pedido</Text>
-          </TouchableOpacity>
-          <View style={{ width: 10, marginBottom: 50 }} />
-        </>
-      }
-    />
+    <ScrollView>
+      <View style={pedidoDetalleStyles.container}>
+        <Text style={pedidoDetalleStyles.title}>{producto.identificador}</Text>
+        <Text style={pedidoDetalleStyles.productName}>{producto.nombre}</Text>
+        <Text style={pedidoDetalleStyles.productDescription}>{producto.descripcion}</Text>
+        {producto.codigo_barras && (<Text style={pedidoDetalleStyles.variantInfo}>Código de barras: {producto.codigo_barras}</Text>)}
+        <Text style={pedidoDetalleStyles.sectionTitle}>Variaciones:</Text>
+        <FlatList
+          data={producto.variantes}
+          keyExtractor={(item) => item._id}
+          renderItem={renderVarianteItem}
+        />
+        <Text style={pedidoDetalleStyles.sectionTitle}>Subpedido:</Text>
+        <FlatList
+          data={subpedido}
+          keyExtractor={(item) => item._id}
+          renderItem={renderSubpedidoItem}
+        />
+        <TouchableOpacity
+          style={pedidoDetalleStyles.añadirButton}
+          onPress={handleAñadirPedido}
+        >
+          <Text style={pedidoDetalleStyles.añadirButtonText}>Añadir Pedido</Text>
+        </TouchableOpacity>
+        <View style={{ width: 10, marginBottom: 50 }} />
+      </View>
+    </ScrollView>
   );
 };
 

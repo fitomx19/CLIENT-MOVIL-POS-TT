@@ -26,11 +26,11 @@ export default function App  ()  {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestPermissionsAsync(); 
       setHasCameraPermission(cameraStatus.status === 'granted');
-    })();
+    })(); 
+    
   }
   , []);
-
-  console.log(hasCameraPermission);
+ 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { getVentas } from './RevisarPedidosService';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
@@ -44,35 +44,37 @@ const RevisarPedidosScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-       <Text style={styles.title}>Lista de Ventas</Text>
-      <View style={styles.iconContainer}>
-        <TouchableOpacity onPress={toggleOrden} style={styles.iconButton}>
-          <Icon name={ordenAscendente ? 'arrow-up' : 'arrow-down'} size={20} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={toggleColumns} style={styles.iconButton}>
-          <Icon name={numColumns === 1 ? 'list' : 'th-large'} size={20} color="#fff" />
-        </TouchableOpacity>
-      </View>
-     
-      <FlatList
-        data={ventas}
-        key={numColumns}
-        style={styles.flatListContainer}
-        numColumns={numColumns}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigateToDetalle(item)} style={styles.cardContainer}>
-            <View style={styles.itemContainer}>
-              <Text style={styles.date}>Fecha: {moment(item.fecha).locale('es-mx').format('LLLL')}</Text>
-              <Text style={styles.date}>Hora: {moment(item.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
-              <Text style={styles.total}>Total: ${item.total}</Text>
-              <Text style={styles.total}>Estado: {item.estado}</Text>
-            </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.title}>Lista de Ventas</Text>
+        <View style={styles.iconContainer}>
+          <TouchableOpacity onPress={toggleOrden} style={styles.iconButton}>
+            <Icon name={ordenAscendente ? 'arrow-up' : 'arrow-down'} size={20} color="#fff" />
           </TouchableOpacity>
-        )}
-      />
-    </View>
+          <TouchableOpacity onPress={toggleColumns} style={styles.iconButton}>
+            <Icon name={numColumns === 1 ? 'list' : 'th-large'} size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          data={ventas}
+          key={numColumns}
+          style={styles.flatListContainer}
+          numColumns={numColumns}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => navigateToDetalle(item)} style={styles.cardContainer}>
+              <View style={styles.itemContainer}>
+                <Text style={styles.title2}>{item.identificador}</Text>
+                <Text style={styles.date}>Fecha: {moment(item.fecha).locale('es-mx').format('LLLL')}</Text>
+                <Text style={styles.date}>Hora: {moment(item.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
+                <Text style={styles.total}>Total: ${item.total}</Text>
+                <Text style={styles.total}>Estado: {item.estado}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </ScrollView>
   );
 };
 
