@@ -1,6 +1,17 @@
 import { StyleSheet } from 'react-native';
 
-export const pedidoDetalleStyles = StyleSheet.create({
+export const pedidoDetalleStyles = StyleSheet.create({ 
+    
+  
+  subpedidoItemContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+  },
+  subpedidoItemDetails: {
+      flex: 1,
+  },
   container: {
     padding: 20,
   },

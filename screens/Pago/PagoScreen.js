@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
 import { createTicket } from './PagoScreenService';
 import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
 import moment from 'moment-timezone';
+import {styles } from './PagoScreen.style';
 
 const PagoScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -17,6 +18,7 @@ const PagoScreen = ({ route }) => {
   const [referencia, setReferencia] = useState('');
   const [cocina, setCocina] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null); // Estado para almacenar los datos decodificados del JWT
+  const [loading, setLoading] = useState(false); // Estado para controlar la carga durante la transacción de pago
 
   const obtenerPedido = async () => {
     const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -39,6 +41,9 @@ const PagoScreen = ({ route }) => {
   };
 
   const handlePayment = async () => {
+    // Bloquea el botón de pago para evitar pagos múltiples
+    setLoading(true);
+
     const jsonPedido = pedido.map(item => ({
       producto: item.productoId,
       cantidad: item.cantidad,
@@ -58,6 +63,7 @@ const PagoScreen = ({ route }) => {
     //validar que paymentMethod no sea vacio
     if (paymentMethod ==  "") {
       alert('Selecciona un método de pago');
+      setLoading(false); // Desbloquea el botón de pago
       return;
     }
 
@@ -79,6 +85,8 @@ const PagoScreen = ({ route }) => {
     } catch (error) {
       console.error('Error al realizar el pedido:', error);
       alert('Error al realizar el pedido');
+    } finally {
+      setLoading(false); // Desbloquea el botón de pago después de completar la transacción
     }
   };
 
@@ -131,54 +139,17 @@ const PagoScreen = ({ route }) => {
         buttonStyle={{ marginBottom: 10 }}
         onPress={() => setCocina(!cocina)}
       />
-      <TouchableOpacity onPress={handlePayment} style={styles.payButton}>
-        <Text style={styles.payButtonText}>Pagar</Text>
+      {/* Bloquea el botón de pago y muestra un indicador de carga si loading es true */}
+      <TouchableOpacity onPress={handlePayment} style={styles.payButton} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.payButtonText}>Pagar</Text>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  totalText: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  orderContainer: {
-    marginBottom: 20,
-  },
-  orderItem: {
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    paddingVertical: 10,
-  },
-  picker: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  payButton: {
-    marginTop: 20,
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  payButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-});
 
 export default PagoScreen;

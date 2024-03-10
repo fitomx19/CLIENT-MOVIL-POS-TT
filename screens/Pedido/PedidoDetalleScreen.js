@@ -33,17 +33,10 @@ const PedidoDetalleScreen = ({ route }) => {
   };
 
   const handleEliminarVariante = (id) => {
-    const existente = subpedido.find((item) => item._id === id);
-
-    if (existente && existente.cantidad > 0) {
-      const nuevoSubpedido = subpedido.map((item) =>
-        item._id === id ? { ...item, cantidad: item.cantidad - 1 } : item
-      );
-      setSubpedido(nuevoSubpedido);
-      guardarSubpedidoEnAsyncStorage(nuevoSubpedido);
-    } else {
-      Alert.alert('No se puede eliminar más.');
-    }
+    // Filtrar el subpedido para eliminar el artículo con el id correspondiente
+    const nuevoSubpedido = subpedido.filter((item) => item._id !== id);
+    setSubpedido(nuevoSubpedido);
+    guardarSubpedidoEnAsyncStorage(nuevoSubpedido);
   };
 
   const handleAñadirPedido = async () => {
@@ -76,7 +69,6 @@ const PedidoDetalleScreen = ({ route }) => {
   const renderVarianteItem = ({ item }) => (
     <ListItem containerStyle={pedidoDetalleStyles.variantContainer}>
       <View style={pedidoDetalleStyles.variantContent}>
-        
         <Text style={pedidoDetalleStyles.variantName}>{item.nombre}</Text>
         <Text style={pedidoDetalleStyles.variantInfo}>Cantidad disponible: {item.existencias}</Text>
         <Text style={pedidoDetalleStyles.variantInfo}>Código de barras: {item.codigo_barras}</Text>
@@ -113,10 +105,16 @@ const PedidoDetalleScreen = ({ route }) => {
   }, []); // El segundo argumento [] asegura que se ejecute solo al montar el componente
 
   const renderSubpedidoItem = ({ item }) => (
-    <View style={pedidoDetalleStyles.subpedidoItem} key={item._id}>
-      <Text>{item.productoOrigen} - {item.nombre}</Text>
-      <Text>Cantidad: {item.cantidad}</Text>
-      <Text>Precio Unitario: ${item.precio_unitario}</Text>
+    <View style={pedidoDetalleStyles.subpedidoItemContainer}>
+      <View style={pedidoDetalleStyles.subpedidoItemDetails}>
+        <Text>{item.productoOrigen} - {item.nombre}</Text>
+        <Text>Cantidad: {item.cantidad}</Text>
+        <Text>Precio Unitario: ${item.precio_unitario}</Text>
+      </View>
+      {/* Icono de basura para eliminar el artículo del subpedido */}
+      <TouchableOpacity onPress={() => handleEliminarVariante(item._id)}>
+        <Icon name="delete" size={30} color="red" />
+      </TouchableOpacity>
     </View>
   );
 
