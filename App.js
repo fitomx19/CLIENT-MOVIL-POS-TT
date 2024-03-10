@@ -14,14 +14,14 @@ import PedidoDetalleScreen from './screens/Pedido/PedidoDetalleScreen';
 import PagoScreen from './screens/Pago/PagoScreen';
 import RevisarPedidosScreen from './screens/Pedido/RevisarPedidosScreen';
 import RevisarPedidosDetalleScreen from './screens/Pedido/RevisarPedidosDetalleScreen';
-import { Camera, CameraType } from 'expo-camera';
+//import { Camera, CameraType } from 'expo-camera';
 
 const Stack = createStackNavigator();
 
 export default function App  ()  {
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  //const [hasCameraPermission, setHasCameraPermission] = useState(null);
 
-  useEffect(() => { 
+  /*useEffect(() => { 
     (async () => {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestPermissionsAsync(); 
@@ -30,6 +30,7 @@ export default function App  ()  {
     
   }
   , []);
+  */2
  
   return (
     <NavigationContainer>

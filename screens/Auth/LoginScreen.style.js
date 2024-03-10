@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add an overlay for better readability
+      backgroundColor: 'rgba(0, 0, 0, 0.3)', // Add an overlay for better readability
       width: '100%',
       padding: 20,
     },
@@ -32,6 +32,16 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       color: 'white', // Set text color to white
     },
+    boton:{
+      color: 'white',
+      backgroundColor: 'green',
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 10,
+      
+    }
   });
 
 export default styles;
