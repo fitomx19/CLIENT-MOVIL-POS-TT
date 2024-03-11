@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, FlatList, StyleSheet, Text, Image, TextInput, Pressable, Button, Alert } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Pressable, Alert } from 'react-native';
 import Total from './components/Total';
-import { getProductsFiltered, enviarImagen } from '../Productos/ProductosScreenService';
+import { getProductsFiltered } from '../Productos/ProductosScreenService';
 import ListaProductos from './components/ListaProductos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Camera } from "expo-camera";
+import { enviarImagen, procesarImagenAsyncStorage } from './PedidoScreenService';
 
 const PedidosAddScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
@@ -32,26 +33,7 @@ const PedidosAddScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    const takeAndSendPicture = async () => {
-      if (cameraRef.current) {
-        try {
-          const { uri } = await cameraRef.current.takePictureAsync();
-          console.log('Imagen capturada:', uri);
-          // Enviar la imagen al servidor Flask
-          const resultado = await enviarImagen(uri); 
-          Alert.alert(`Nivel de estres: ${resultado.emocion_predominante} , Coefiente de confianza: ${resultado.promedio_coeficientes} , Emocion predominante: ${resultado.emocion_predominante}`);
-          setIsCameraActive(false);
-        } catch (error) {
-          console.error('Error al capturar la imagen:', error);
-        }
-      }
-    };
-  
-    // Llamar a la función para tomar y enviar la foto al cargar la pantalla
-    takeAndSendPicture();
-  }, []);
-
+ 
   
   useEffect(() => {
     const fetchData = async () => {
@@ -66,10 +48,6 @@ const PedidosAddScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-
-
-
-
     const cargarDesdeAsyncStorage = async () => {
       try {
         const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -85,16 +63,30 @@ const PedidosAddScreen = ({ navigation }) => {
     const unsubscribe = navigation.addListener('focus', () => {
       cargarDesdeAsyncStorage();
     });
-
-     //usar takePictureAsync para tomar la foto
-     takePicture() 
     return unsubscribe;
-
-   
-
   }, [navigation]);
 
   const filteredProducts = products.filter(product => product.nombre.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  /*const takePictureAnalyseSentimen = async () => {
+    if (cameraRef.current) {
+      try {
+        const { uri } = await cameraRef.current.takePictureAsync();
+        console.log('Imagen capturada:', uri);
+        // Enviar la imagen al servidor Flask
+        const resultado = await enviarImagen(uri); 
+        Alert.alert(
+          'Análisis de imagen',
+          `Nivel de estres: ${resultado.emocion_predominante}\nCoeficiente de confianza: ${resultado.promedio_coeficientes}\nEmocion predominante: ${resultado.emocion_predominante}`,
+          [{ text: 'OK', onPress: () => setIsCameraActive(false) }],
+          { cancelable: false, style: 'large' } // Agregamos style: 'large' para aumentar el tamaño del contenedor de alerta
+        );
+        setIsCameraActive(false);
+      } catch (error) {
+        console.error('Error al capturar la imagen:', error);
+      }
+    }
+  };*/
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -102,14 +94,26 @@ const PedidosAddScreen = ({ navigation }) => {
         const { uri } = await cameraRef.current.takePictureAsync();
         console.log('Imagen capturada:', uri);
         // Enviar la imagen al servidor Flask
-        const resultado = await enviarImagen(uri); 
-        Alert.alert(`Nivel de estres: ${resultado.emocion_predominante} , Coefiente de confianza: ${resultado.promedio_coeficientes} , Emocion predominante: ${resultado.emocion_predominante}`);
-        setIsCameraActive(false);
-      } catch (error) {
-        console.error('Error al capturar la imagen:', error);
-      }
+        const imagen = await procesarImagenAsyncStorage(uri);
+        console.log('Imagen guardada en AsyncStorage:', imagen);
+        //mostrar el local storage de imagenes
+        const imagenes = await AsyncStorage.getItem('imagenes');
+    } catch (error) {
+      console.error('Error al capturar la imagen:', error);
     }
-  };
+  }
+};
+  
+
+  //esperar 3 segundos para que la camara se active
+  useEffect(() => {
+     
+      const timer = setTimeout(() => {
+        takePicture();
+      }, 3000);
+      return () => clearTimeout(timer);
+    
+  }, []);
 
   return (
     <>
@@ -128,13 +132,12 @@ const PedidosAddScreen = ({ navigation }) => {
           <Icon name="camera" size={20} color="black" style={{ marginLeft: 20, marginRight: 20 }} />
         </Pressable>
       </View>
-      {isCameraActive && (
-        <View style={styles.cameraContainer}>
+      
+      
           <Camera ref={cameraRef} style={styles.camera} type={Camera.Constants.Type.front} />
-          <Button title="Tomar foto" onPress={takePicture} />
-          <Button title="Cerrar cámara" onPress={() => setIsCameraActive(false)} />
-        </View>
-      )}
+           
+         
+     
       {filteredProducts.length > 0 ? (
         <ListaProductos products={filteredProducts} />
       ) : (
@@ -166,7 +169,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   camera: {
-    flex: 1,
+    height:1
   }
 });
 

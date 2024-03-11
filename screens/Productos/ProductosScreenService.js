@@ -171,31 +171,5 @@ export const updateProduct = async (productId, updatedData) => {
     }
 };
 
-export const enviarImagen = async (uri) => {
-  try {
 
-    console.log('Enviando imagen:', uri);
-    let formData = new FormData();
-    formData.append('imagen', {
-      uri: uri,
-      type: 'image/jpeg',
-      name: 'photo.jpg',
-    });
-
-    let response = await fetch('https://321b-187-191-33-167.ngrok-free.app//cargar_imagenes', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    let data = await response.json();
-    return data;
-    console.log('Respuesta del servidor:', data);
-  } catch (error) {
-    console.error('Error al subir la imagen:', error);
-
-  }
-};
  
