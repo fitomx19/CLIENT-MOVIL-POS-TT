@@ -35,22 +35,23 @@ export default function App  ()  {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="MenuScreen" component={MenuScreen}  options={{ 
           headerShown: false,  
         }} />
-        <Stack.Screen name="ProductScreen" component={ProductScreen} />
-        <Stack.Screen name="ProductosAddScreen" component={ProductosAddScreen} />
+        <Stack.Screen name="ProductScreen" component={ProductScreen} options={{headerTitle: "Lista de productos"}} />
+        <Stack.Screen name="ProductosAddScreen" component={ProductosAddScreen} options={{headerTitle: "Agregar Producto"}} />
         <Stack.Screen 
           name="ProductDetail" 
           component={ProductDetailScreen} 
+          options={{headerTitle: "Detalle de producto"}}
           initialParams={{ onGoBack: () => {} }}  
         />
-        <Stack.Screen name="PedidosScreen" component={PedidosScreen}  />
-        <Stack.Screen name="PedidoDetalleScreen" component={PedidoDetalleScreen} />
-        <Stack.Screen name="PagoScreen" component={PagoScreen} />
-        <Stack.Screen name="RevisarPedidosScreen" component={RevisarPedidosScreen} />
-        <Stack.Screen name="RevisarPedidosDetalleScreen" component={RevisarPedidosDetalleScreen} />
+        <Stack.Screen name="PedidosScreen" component={PedidosScreen} options={{headerTitle:"Crear pedido"}}  />
+        <Stack.Screen name="PedidoDetalleScreen" component={PedidoDetalleScreen} options={{headerTitle: "Detalles de pedido"}} />
+        <Stack.Screen name="PagoScreen" component={PagoScreen} options={{headerTitle: ""}} />
+        <Stack.Screen name="RevisarPedidosScreen" component={RevisarPedidosScreen}  options={{headerTitle: "Revisar pedidos"}} />
+        <Stack.Screen name="RevisarPedidosDetalleScreen" component={RevisarPedidosDetalleScreen} options={{headerTitle: "Detalles de pedidos"}}  />
       </Stack.Navigator>
     </NavigationContainer>
   );

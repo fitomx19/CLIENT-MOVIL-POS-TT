@@ -13,17 +13,25 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         padding: 10,
-        color: 'green',
+        color: 'white',
       },
 
       subtitle: {
         fontSize: 16,
         marginBottom: 16,
         textAlign: 'center',
-         
         padding: 10,
-        color: 'green',
+        color: 'white',
       },
+
+      subtitle2: {
+        fontSize: 16,
+        marginBottom: 16,
+        textAlign: 'center',
+        padding: 10,
+        color: 'black',
+      },
+
 
       button: {
         backgroundColor: 'forestgreen', // Color verde forestal

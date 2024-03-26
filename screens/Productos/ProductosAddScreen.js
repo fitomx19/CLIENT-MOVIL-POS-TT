@@ -100,7 +100,7 @@ const ProductosAddScreen = ({ navigation }) => {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.container}>
-          <Text style={{fontWeight:700}}>Crear Producto</Text>
+          
           <View style={styles.container}>
             <Text style={styles.label}>Nuevo Nombre:</Text>
             <TextInput
