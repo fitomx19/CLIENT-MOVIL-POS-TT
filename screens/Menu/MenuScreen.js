@@ -17,11 +17,10 @@ const MenuScreen = ({ navigation }) => {
       if (!token) {
         navigation.navigate('LoginScreen');
       }
-      console.log('Token: 🥲 ', token);
+       
       //deencriptar token
       const tokenDecoded =  await decodeJwt(token);
-      console.log('Token Decoded😍:', tokenDecoded);
-      console.log('Token Decoded user: 😍', tokenDecoded.username);
+       
       setUser(tokenDecoded.username);
        
     } catch (error) {

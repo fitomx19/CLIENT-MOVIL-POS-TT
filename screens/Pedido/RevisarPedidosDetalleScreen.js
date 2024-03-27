@@ -6,7 +6,7 @@ import styles from "./RevisarPedidosDetalleScreen.style";
 
 const RevisarPedidosDetalleScreen = ({ route }) => {
   const detallePedido = route.params.detallePedido;
-
+  console.log("detallePedido 🥶 ", detallePedido);
   return (
     <ScrollView>
       <View style={styles.container}>

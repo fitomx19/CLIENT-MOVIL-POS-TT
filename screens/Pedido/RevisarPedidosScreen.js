@@ -6,6 +6,7 @@ import moment from 'moment';
 import 'moment/locale/es-mx';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './RevisarPedidosScreen.style';
+import Spinner from '../../globalComponents/Spinner';
 
 const RevisarPedidosScreen = () => {
   const [ventas, setVentas] = useState([]);
@@ -60,6 +61,7 @@ const RevisarPedidosScreen = () => {
           key={numColumns}
           style={styles.flatListContainer}
           numColumns={numColumns}
+          ListEmptyComponent={<Spinner/>}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => navigateToDetalle(item)} style={styles.cardContainer}>

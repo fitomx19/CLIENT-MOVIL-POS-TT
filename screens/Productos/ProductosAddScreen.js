@@ -7,11 +7,13 @@ import { Camera } from "expo-camera";
 import styles from './ProductosAddScreen.style';
 import { Button } from 'react-native-elements'; 
 import Icon from 'react-native-vector-icons/FontAwesome'; // Por ejemplo, para usar iconos de FontAwesome
+import Spinner from '../../globalComponents/Spinner';
 
 
 const ProductosAddScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [presionado, setPresionado] = useState(false);
   const [producto, setUpdatedProduct] = useState({
     nombre: "",
     descripcion: "",
@@ -70,6 +72,7 @@ const ProductosAddScreen = ({ navigation }) => {
   };
 
   const handleAdd = async () => {
+    setPresionado(true);
     try {  
       const newProduct = {
         ...producto,
@@ -78,8 +81,10 @@ const ProductosAddScreen = ({ navigation }) => {
       }; 
       await createProduct(newProduct); 
       Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
-        { text: 'OK', onPress: () => navigation.navigate('ProductScreen') }, // Navega hacia atrás al presionar OK
+        { text: 'OK', onPress: () => navigation.navigate('ProductScreen') },  
       ]);
+
+      setPresionado(false);
 
       // Limpia el formulario
       setUpdatedProduct({
@@ -102,7 +107,7 @@ const ProductosAddScreen = ({ navigation }) => {
         <ScrollView style={styles.container}>
           
           <View style={styles.container}>
-            <Text style={styles.label}>Nuevo Nombre:</Text>
+            <Text style={styles.label}>Nombre:</Text>
             <TextInput
               style={styles.input}
               value={producto.nombre}
@@ -184,10 +189,6 @@ const ProductosAddScreen = ({ navigation }) => {
             </View>
           </View>
 
-
-
-
-
             <Text style={styles.label}>Crea tus variantes:</Text>
             <View style={styles.variantContainer}>
               {producto.variantes.map((variante, index) => (
@@ -238,23 +239,32 @@ const ProductosAddScreen = ({ navigation }) => {
               ))}
             </View>
 
-            <Pressable
-              style={styles.buttongreen}
-              onPress={() =>
-                setUpdatedProduct((prevState) => ({
-                  ...prevState,
-                  variantes: [
-                    ...prevState.variantes,
-                    { nombre: "", precio: "", existencias: "" },
-                  ],
-                }))
-              }
-            >
-              <Text style={styles.text}>Agregar Variante</Text>
-            </Pressable>
-            <Pressable style={styles.buttonyellow} onPress={handleAdd}>
-              <Text style={styles.text}>Crear Producto</Text>
-            </Pressable>
+            
+            {
+              !presionado ? (
+
+                <>
+                  <Pressable
+                  style={styles.buttongreen}
+                  onPress={() =>
+                    setUpdatedProduct((prevState) => ({
+                      ...prevState,
+                      variantes: [
+                        ...prevState.variantes,
+                        { nombre: "", precio: "", existencias: "" },
+                      ],
+                    }))
+                  }
+                >
+                  <Text style={styles.text}>Agregar Variante</Text>
+                </Pressable>
+                <Pressable style={styles.buttonyellow} onPress={handleAdd}>
+                  <Text style={styles.text}>Crear Producto</Text>
+                </Pressable>
+                </>
+              ) : 
+              <Spinner />
+            }
           </View>
 
 

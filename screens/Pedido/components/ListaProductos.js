@@ -3,6 +3,8 @@ import { View, FlatList, Text, Image, StyleSheet, TouchableOpacity, Dimensions }
 import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';  
 import { listaProductosStyles } from '../styles/ListaProductosStyles';  
+import  Spinner  from '../../../globalComponents/Spinner';
+
 
 const ListaProductos = ({ products }) => {
   const [sortedProducts, setSortedProducts] = useState([]);
@@ -41,7 +43,7 @@ const ListaProductos = ({ products }) => {
       data={sortedProducts}
       keyExtractor={(item) => item._id}
       renderItem={renderProduct}
-      ListEmptyComponent={<Text>Cargando ... </Text>}
+      ListEmptyComponent={<Spinner/>}
     />
   );
 };
