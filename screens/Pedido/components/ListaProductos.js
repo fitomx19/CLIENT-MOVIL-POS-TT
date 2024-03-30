@@ -38,7 +38,8 @@ const ListaProductos = ({ products }) => {
   };
 
   return (
-    <FlatList
+  
+      <FlatList
       style={listaProductosStyles.container}
       data={sortedProducts}
       keyExtractor={(item) => item._id}

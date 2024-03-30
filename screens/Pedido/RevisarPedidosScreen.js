@@ -1,12 +1,14 @@
+// RevisarPedidosScreen.js
+
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity } from 'react-native';
-import { getVentas } from './RevisarPedidosService';
+import { View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import 'moment/locale/es-mx';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import styles from './RevisarPedidosScreen.style';
 import Spinner from '../../globalComponents/Spinner';
+import { getVentas } from './RevisarPedidosService';
+import styles from './RevisarPedidosScreen.style'; // Importamos los estilos
 
 const RevisarPedidosScreen = () => {
   const [ventas, setVentas] = useState([]);
@@ -14,6 +16,7 @@ const RevisarPedidosScreen = () => {
   const [numColumns, setNumColumns] = useState(1);
   const navigation = useNavigation();
 
+  // Función para obtener las ventas
   useEffect(() => {
     const fetchVentas = async () => {
       try {
@@ -26,55 +29,74 @@ const RevisarPedidosScreen = () => {
     fetchVentas();
   }, []);
 
+  // Función para cambiar el orden de las ventas
   const toggleOrden = () => {
     setOrdenAscendente(!ordenAscendente);
     const ventasOrdenadas = [...ventas].sort((a, b) => {
-      const dateA = new Date(a.fecha);
-      const dateB = new Date(b.fecha);
-      return ordenAscendente ? dateA - dateB : dateB - dateA;
+      return ordenAscendente ? a.fecha.localeCompare(b.fecha) : b.fecha.localeCompare(a.fecha);
     });
     setVentas(ventasOrdenadas);
   };
 
+  // Función para cambiar el número de columnas
   const toggleColumns = () => {
     setNumColumns(numColumns === 1 ? 2 : 1);
   };
 
+  // Función para navegar al detalle de un pedido
   const navigateToDetalle = (item) => {
     navigation.navigate('RevisarPedidosDetalleScreen', { detallePedido: item });
   };
 
+  // Función para agrupar los pedidos por fecha
+  const groupByDate = (ventas) => {
+    return ventas.reduce((result, venta) => {
+      const fecha = moment(venta.fecha).format('YYYY-MM-DD');
+      if (!result[fecha]) {
+        result[fecha] = [];
+      }
+      result[fecha].push(venta);
+      return result;
+    }, {});
+  };
+
+  // Agrupar los pedidos por fecha
+  const ventasAgrupadas = groupByDate(ventas);
+
   return (
     <ScrollView>
+      <View style={styles.iconContainer}>
+        <TouchableOpacity onPress={toggleOrden} style={styles.iconButton}>
+          <Icon name="sort-alpha-asc" size={20} color="forestgreen" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleColumns} style={styles.iconButton}>
+          <Icon name={numColumns === 1 ? 'list' : 'th-large'} size={20} color="forestgreen" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.container}>
-        <Text style={styles.title}>Lista de Ventas</Text>
-        <View style={styles.iconContainer}>
-          <TouchableOpacity onPress={toggleOrden} style={styles.iconButton}>
-            <Icon name={ordenAscendente ? 'arrow-up' : 'arrow-down'} size={20} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={toggleColumns} style={styles.iconButton}>
-            <Icon name={numColumns === 1 ? 'list' : 'th-large'} size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={ventas}
-          key={numColumns}
-          style={styles.flatListContainer}
-          numColumns={numColumns}
-          ListEmptyComponent={<Spinner/>}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigateToDetalle(item)} style={styles.cardContainer}>
-              <View style={styles.itemContainer}>
-                <Text style={styles.title2}>{item.identificador}</Text>
-                <Text style={styles.date}>Fecha: {moment(item.fecha).locale('es-mx').format('LLLL')}</Text>
-                <Text style={styles.date}>Hora: {moment(item.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
-                <Text style={styles.total}>Total: ${item.total}</Text>
-                <Text style={styles.total}>Estado: {item.estado}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+        {Object.entries(ventasAgrupadas).map(([fecha, ventasPorFecha]) => (
+          <View key={fecha}>
+            <Text style={styles.title}>{moment(fecha).locale('es-mx').format('dddd LL')}</Text>
+            <FlatList
+              data={ventasPorFecha}
+              key={numColumns}
+              style={styles.flatListContainer}
+              numColumns={numColumns}
+              ListEmptyComponent={<Spinner />}
+              keyExtractor={(item) => item._id}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => navigateToDetalle(item)} style={styles.cardContainer}>
+                  <View style={styles.itemContainer}>
+                    <Text style={styles.title2}>{item.identificador.substring(0, 18) + "-" + item.identificador.substring(18)}</Text>
+                    <Text style={styles.date}><Icon name={'calendar'} size={20} color="forestgreen" /> {moment(item.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
+                    <Text style={styles.total}><Icon name={'money'} size={20} color="forestgreen" /> ${item.total}</Text>
+                    <Text style={styles.total}>Estado: {item.estado.toUpperCase()}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        ))}
       </View>
     </ScrollView>
   );

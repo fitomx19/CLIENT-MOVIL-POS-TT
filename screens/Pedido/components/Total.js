@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native'; 
+
 
 
 const Total = ({total,setTotal}) => {
-  const navigation = useNavigation();
-
-  const navigateToPay = async () => {
-      navigation.navigate('PagoScreen' , { total : total} );
-    };
+  
 
   useEffect(() => {
     // Calcular el total al cargar el componente
@@ -35,16 +31,13 @@ const Total = ({total,setTotal}) => {
     }
   };
 
-  const handlePagar = () => {
-    navigateToPay();
-  };
-
+ 
   const handleLimpiarLocalStorage = async () => {
     try {
       // Limpiar el subpedido en AsyncStorage
       await AsyncStorage.removeItem('subpedido');
       setTotal(0);
-      alert('LocalStorage limpiado con éxito');
+      alert('Pedido  limpiado con éxito');
     } catch (error) {
       console.error('Error al limpiar el LocalStorage:', error);
     }
@@ -53,17 +46,13 @@ const Total = ({total,setTotal}) => {
   return (
     <View style={styles.container}>
       <View style={styles.totalContainer}>
-        <Icon name="shopping-cart" type="font-awesome" color="green" size={30} />
+        
         <Text style={styles.totalText}>Total:</Text>
         <Text style={styles.amountText}>${total}</Text>
       </View>
-      {total > 0 && (
-        <TouchableOpacity style={styles.payButton} onPress={handlePagar}>
-          <Text style={styles.payButtonText}>Pagar</Text>
-        </TouchableOpacity>
-      )}
+     
       <TouchableOpacity style={styles.trashButton} onPress={handleLimpiarLocalStorage}>
-        <Icon name="trash" type="font-awesome" color="white" size={30} />
+        <Icon name="trash" type="font-awesome" color="white" size={20} />
       </TouchableOpacity>
     </View>
   );
@@ -75,7 +64,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'forestgreen',
+    marginBottom: 10,
+    
   },
   totalContainer: {
     flexDirection: 'row',
@@ -85,10 +76,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 5,
+    color: 'white',
   },
   amountText: {
     fontSize: 18,
-    color: 'green',
+    color: 'white',
     fontWeight: 'bold',
     marginLeft: 5,
   },

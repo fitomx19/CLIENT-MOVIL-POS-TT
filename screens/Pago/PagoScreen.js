@@ -92,7 +92,7 @@ const PagoScreen = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.totalText}>Pantalla de Pago de un total de ${total}.00</Text>
+      <Text style={styles.totalText}>Pedido final  ${total}.00</Text>
       <View style={styles.orderContainer}>
         {pedido.map(item => (
           <View key={item._id} style={styles.orderItem}>

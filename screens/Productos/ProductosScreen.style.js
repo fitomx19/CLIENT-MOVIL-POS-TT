@@ -46,13 +46,15 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: 'lightgray',
+        backgroundColor: 'forestgreen',
+        
       },
       filterContainer: {
         flexDirection: 'row',
         alignItems: 'center',
       },
       filterText: {
+        color: 'white',
         marginLeft: 5,
       },
       iconButton: {
@@ -60,9 +62,10 @@ const styles = StyleSheet.create({
       },
       searchInput: {
         height: 40,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: 'forestgreen',
+        borderRadius: 10,
+        margin: 20,
         paddingHorizontal: 10,
         marginBottom: 10,
       },
@@ -70,7 +73,44 @@ const styles = StyleSheet.create({
         fontSize: windowWidth < 375 ? 12 : 16,
         marginBottom: 10,
       },
+ 
+      
+        column: {
+          flex: 1,
+          paddingHorizontal: 5,
+        },
+        cardContainer: {
+          marginBottom: 10,
+        },
+        cardContent: {
+          flexDirection: 'row',
+        },
+        textContainer: {
+          flex: 1,
+        },
+        imageContainer: {
+          marginLeft: 10,
+          justifyContent: 'center',
+        },
+        productImage: {
+          width: 100,
+          height: 100,
+          borderRadius: 10,
+        },
+        title: {
+          // Estilos para el título
+        },
+        productDescription: {
+          // Estilos para la descripción
+        },
 
-  });
+        cardSearch : {
+          backgroundColor: 'white',
+        }
+       
+      });
+      
+
+ 
 
 export default styles;

@@ -3,7 +3,8 @@ import { StyleSheet } from 'react-native';
 export const listaProductosStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
+     
   },
   card: {
     marginVertical: 5,
@@ -14,6 +15,7 @@ export const listaProductosStyles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     elevation: 3,
     alignItems: 'flex-start',
+    
   },
   contentContainer: {
     flexDirection: 'row',

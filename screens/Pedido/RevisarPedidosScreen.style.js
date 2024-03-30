@@ -1,4 +1,6 @@
-import { StyleSheet , Dimensions } from 'react-native';
+// RevisarPedidosScreen.styles.js
+
+import { StyleSheet, Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -13,7 +15,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title2: {
-    fontSize: 18,
+    fontSize: windowWidth < 375 ? 16 : 14,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -21,9 +23,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
+    backgroundColor: 'forestgreen',
+    padding: 10,
+    position: 'sticky', // Hacer el contenedor pegajoso
+    top: 0, // Fijar el contenedor en la parte superior
+    zIndex: 1, // Asegurar que esté por encima del contenido
   },
   iconButton: {
-    backgroundColor: 'orange',
+    backgroundColor: 'white',
     padding: 10,
     borderRadius: 8,
     marginHorizontal: 4,
@@ -48,17 +55,6 @@ const styles = StyleSheet.create({
     fontSize: windowWidth < 375 ? 10 : 16,
     fontWeight: 'bold',
     marginTop: 8,
-  },
-  detalleButton: {
-    backgroundColor: '#3498db',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 16,
-    marginVertical: 8,
-  },
-  detalleButtonText: {
-    color: '#fff',
-    textAlign: 'center',
   },
   cardContainer: {
     flex: 1,

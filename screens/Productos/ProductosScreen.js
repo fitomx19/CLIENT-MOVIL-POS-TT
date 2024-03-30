@@ -48,35 +48,49 @@ const ProductScreen = ({ navigation }) => {
     fetchProducts();
   };
 
-  const renderItem = ({ item }) => {
-    const productImage = item.imagen ? { uri: item.imagen } : { uri: 'https://ibarramayoreo.com/detalle/images/iconos/no-encontrado.png' };
-    const statusColor = item.activo ? 'green' : 'red';
 
+
+  const renderItem = ({ item }) => {
+    const statusColor = item.activo ? 'green' : 'red';
+  
     const navigateToProductDetail = (product) => {
-      console.log('Product:', product);
       navigation.navigate('ProductDetail', { product, onGoBack: () => fetchProducts() });
     };
-    
+  
     return (
-      <View style={styles.productContainer}>
+      <View style={styles.column}>
         <Card containerStyle={styles.cardContainer}>
-          <Image source={productImage} style={styles.productImage} />
-          <Text style={styles.title}>{item.nombre}</Text>
-          <Text style={styles.productDescription}>{item.descripcion}</Text>
-          <Text style={{ color: statusColor }}>{item.activo ? 'Activo' : 'Inactivo'}</Text>
+          {/* Contenido */}
+          <View style={styles.cardContent}>
+            {/* Texto */}
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{item.nombre}</Text>
+              <Text style={styles.productDescription}>{item.descripcion}</Text>
+              <Text style={{ color: statusColor }}>{item.activo ? 'Activo' : 'Inactivo'}</Text>
+            </View>
+            {/* Imagen */}
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: item.imagen }} style={styles.productImage} />
+            </View>
+          </View>
+          {/* Botón */}
+          <Button
+            title="Ver detalles"
+            onPress={() => navigateToProductDetail(item)}
+            buttonStyle={styles.button}
+          />
         </Card>
-        <Button
-          title="Ver detalles"
-          onPress={() => navigateToProductDetail(item)}
-          buttonStyle={styles.button}
-        />
       </View>
     );
   };
-
+  
+  
   const filteredProducts = products.filter(product =>
-    product.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    showOnlyActive ? product.activo : true  
   );
+  
+
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -84,7 +98,7 @@ const ProductScreen = ({ navigation }) => {
         <Icon
           name={sortOrder === 'asc' ? 'sort-amount-asc' : 'sort-amount-desc'}
           size={30}
-          color="black"
+          color="white"
           onPress={handleSortPress}
           style={styles.iconButton}
         />
@@ -92,12 +106,13 @@ const ProductScreen = ({ navigation }) => {
           <Icon
             name={showOnlyActive ? 'toggle-on' : 'toggle-off'}
             size={30}
-            color={showOnlyActive ? 'green' : 'red'}
+            color={showOnlyActive ? 'white' : 'white'}
             onPress={() => setShowOnlyActive(!showOnlyActive)}
           />
-          <Text style={styles.filterText}>Mostrar solo activos</Text>
+          <Text style={styles.filterText}>Mostrar productos activos</Text>
         </View>
       </View>
+      
       <TextInput
         style={styles.searchInput}
         value={searchTerm}
@@ -105,6 +120,7 @@ const ProductScreen = ({ navigation }) => {
         placeholder="Buscar productos..."
         placeholderTextColor="gray"
       />
+      
       <FlatList
         data={filteredProducts}
         keyExtractor={(product) => product._id}

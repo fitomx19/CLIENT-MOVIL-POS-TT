@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, TextInput, Pressable, Alert } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Pressable, Alert, ScrollView } from 'react-native';
 import Total from './components/Total';
+import Pagar from './components/Pagar';
 import { getProductsFiltered } from '../Productos/ProductosScreenService';
 import ListaProductos from './components/ListaProductos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,15 +27,12 @@ const PedidosAddScreen = ({ navigation }) => {
   const fetchProducts = async () => {
     try {
       let productsData = await getProductsFiltered();
-
       setProducts(productsData);
     } catch (error) {
       console.error('Error en carga de productos:', error.message);
     }
   };
 
- 
-  
   useEffect(() => {
     const fetchData = async () => {
       await fetchProducts();
@@ -42,7 +40,6 @@ const PedidosAddScreen = ({ navigation }) => {
       await AsyncStorage.setItem('hora_inicio', horaInicioDate);
       const hora_inicio = await AsyncStorage.getItem('hora_inicio');
       console.log('Hora de inicio guardada:', hora_inicio);
-
     };
     fetchData();
   }, []);
@@ -68,109 +65,98 @@ const PedidosAddScreen = ({ navigation }) => {
 
   const filteredProducts = products.filter(product => product.nombre.toLowerCase().includes(searchQuery.toLowerCase()));
 
-  /*const takePictureAnalyseSentimen = async () => {
-    if (cameraRef.current) {
-      try {
-        const { uri } = await cameraRef.current.takePictureAsync();
-        console.log('Imagen capturada:', uri);
-        // Enviar la imagen al servidor Flask
-        const resultado = await enviarImagen(uri); 
-        Alert.alert(
-          'Análisis de imagen',
-          `Nivel de estres: ${resultado.emocion_predominante}\nCoeficiente de confianza: ${resultado.promedio_coeficientes}\nEmocion predominante: ${resultado.emocion_predominante}`,
-          [{ text: 'OK', onPress: () => setIsCameraActive(false) }],
-          { cancelable: false, style: 'large' } // Agregamos style: 'large' para aumentar el tamaño del contenedor de alerta
-        );
-        setIsCameraActive(false);
-      } catch (error) {
-        console.error('Error al capturar la imagen:', error);
-      }
-    }
-  };*/
-
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
         const { uri } = await cameraRef.current.takePictureAsync();
         console.log('Imagen capturada:', uri);
-        // Enviar la imagen al servidor Flask
         const imagen = await procesarImagenAsyncStorage(uri);
         console.log('Imagen guardada en AsyncStorage:', imagen);
-        //mostrar el local storage de imagenes
-        const imagenes = await AsyncStorage.getItem('imagenes');
-    } catch (error) {
-      console.error('Error al capturar la imagen:', error);
+      } catch (error) {
+        console.error('Error al capturar la imagen:', error);
+      }
     }
-  }
-};
-  
+  };
 
-  //esperar 3 segundos para que la camara se active
   useEffect(() => {
-     
-      const timer = setTimeout(() => {
-        takePicture();
-      }, 3000);
-      return () => clearTimeout(timer);
-    
+    const timer = setTimeout(() => {
+      takePicture();
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <>
+    <View style={styles.container}>
       <Total total={total} setTotal={setTotal} />
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <TextInput
-          style={{ flex: 1, height: 40, borderColor: 'gray', borderWidth: 1, paddingHorizontal: 20, marginLeft: 10 }}
-          placeholder="Buscar productos"
-          onChangeText={(text) => setSearchQuery(text)}
-          value={searchQuery}
-        />
-        <Pressable onPress={() => console.log("Escanear")}>
-          <Icon name="barcode" size={20} color="black" style={{ marginLeft: 20, marginRight: 20 }} />
-        </Pressable>
-        <Pressable onPress={() => setIsCameraActive(true)}>
-          <Icon name="camera" size={20} color="black" style={{ marginLeft: 20, marginRight: 20 }} />
-        </Pressable>
+      <View style={styles.content}>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Buscar productos"
+            onChangeText={(text) => setSearchQuery(text)}
+            value={searchQuery}
+          />
+          <Pressable onPress={() => console.log("Escanear")}>
+            <Icon name="barcode" size={20} color="black" style={styles.icon} />
+          </Pressable>
+          <Pressable onPress={() => setIsCameraActive(true)}>
+            <Icon name="camera" size={20} color="black" style={styles.icon} />
+          </Pressable>
+        </View>
+        <ScrollView style={styles.scrollContainer}>
+          {filteredProducts.length > 0 ? (
+            <ListaProductos products={filteredProducts} />
+          ) : (
+            <Text>No se encontraron productos</Text>
+          )}
+        </ScrollView>
       </View>
-      
-      
-          <Camera ref={cameraRef} style={styles.camera} type={Camera.Constants.Type.front} />
-           
-         
-     
-      {filteredProducts.length > 0 ? (
-        <ListaProductos products={filteredProducts} />
-      ) : (
-        <Text>No se encontraron productos</Text>
-      )}
-    </>
+      {total > 0 && <Pagar total={total} />}
+      {isCameraActive && <Camera ref={cameraRef} style={styles.camera} type={Camera.Constants.Type.front} />}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderRadius: 20,
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
   container: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
+    marginBottom: 60, // Espacio para el componente Pagar
+  },
+  searchContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 30,
+    marginBottom: 20,
+    marginTop: 10,
+
+    
   },
-  text: {
-    fontSize: 18,
-    marginBottom: 10,
+  input: {
+    flex: 1,
+    height: 40,
+    borderColor: 'forestgreen',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 20,
   },
-  cameraContainer: {
+  icon: {
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  scrollContainer: {
     flex: 1,
   },
   camera: {
-    height:1
-  }
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    zIndex: -1, // Para colocar la cámara detrás del contenido
+  },
 });
 
 export default PedidosAddScreen;
