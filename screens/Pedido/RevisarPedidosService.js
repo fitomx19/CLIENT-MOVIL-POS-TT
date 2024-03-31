@@ -30,7 +30,10 @@ export const getVentas = async () => {
       headers: headers,
     });
 
-    const data = await response.json();
+    let data = await response.json();
+
+    // Ordenar las ventas por fecha de forma descendente
+    data = data.sort((a, b) => moment(b.fecha).valueOf() - moment(a.fecha).valueOf());
 
     return data;
   } catch (error) {
@@ -38,4 +41,3 @@ export const getVentas = async () => {
     throw error;
   }
 };
-

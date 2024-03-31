@@ -1,6 +1,4 @@
-// RevisarPedidosScreen.js
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useRef} from 'react';
 import { View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
@@ -14,6 +12,10 @@ const RevisarPedidosScreen = () => {
   const [ventas, setVentas] = useState([]);
   const [ordenAscendente, setOrdenAscendente] = useState(true);
   const [numColumns, setNumColumns] = useState(1);
+  const [startDate, setStartDate] = useState(moment().subtract(1, 'months').format('YYYY-MM-DD'));
+  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD'));
+  const [isLoading, setIsLoading] = useState(false); // Bandera para controlar la carga
+  const flatListRef = useRef(null);
   const navigation = useNavigation();
 
   // Función para obtener las ventas
@@ -22,18 +24,31 @@ const RevisarPedidosScreen = () => {
       try {
         const data = await getVentas();
         setVentas(data);
+       
       } catch (error) {
         console.error('Error fetching ventas:', error);
       }
     };
     fetchVentas();
-  }, []);
+    
+  },
+  [startDate, endDate]);
+
+  const handleLoadMore = () => {
+    if (!isLoading) { // Verificar si no se está cargando actualmente
+      setIsLoading(true); // Establecer isLoading en true para indicar que se está cargando
+      alert('Cargando más ventas...');
+      setStartDate(moment(startDate).subtract(1, 'months').format('YYYY-MM-DD'));
+      setEndDate(moment(endDate).subtract(1, 'months').format('YYYY-MM-DD'));
+      setIsLoading(false); // Establecer isLoading en false cuando la carga haya terminado
+    }
+  };
 
   // Función para cambiar el orden de las ventas
   const toggleOrden = () => {
     setOrdenAscendente(!ordenAscendente);
     const ventasOrdenadas = [...ventas].sort((a, b) => {
-      return ordenAscendente ? a.fecha.localeCompare(b.fecha) : b.fecha.localeCompare(a.fecha);
+      return ordenAscendente ? b.fecha.localeCompare(a.fecha) : a.fecha.localeCompare(b.fecha);
     });
     setVentas(ventasOrdenadas);
   };
@@ -74,10 +89,14 @@ const RevisarPedidosScreen = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
+        {
+          ventas.length === 0 && <Spinner />
+        }
         {Object.entries(ventasAgrupadas).map(([fecha, ventasPorFecha]) => (
           <View key={fecha}>
             <Text style={styles.title}>{moment(fecha).locale('es-mx').format('dddd LL')}</Text>
             <FlatList
+              ref={flatListRef}
               data={ventasPorFecha}
               key={numColumns}
               style={styles.flatListContainer}
@@ -93,7 +112,10 @@ const RevisarPedidosScreen = () => {
                     <Text style={styles.total}>Estado: {item.estado.toUpperCase()}</Text>
                   </View>
                 </TouchableOpacity>
+                
               )}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={1}
             />
           </View>
         ))}

@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     },
     boton:{
       color: 'white',
-      backgroundColor: 'green',
+      backgroundColor: 'forestgreen',
       padding: 10,
       borderRadius: 5,
       alignItems: 'center',
