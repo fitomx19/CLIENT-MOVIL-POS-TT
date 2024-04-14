@@ -15,3 +15,5 @@ export const productos =    url+    "/api/v1/products/"
 export const pedidos =      url+    "/api/v1/tickets/"
 export const ventas =       url+    "/api/v1/admin/"
 //PROD
+
+//norma 035 MOM

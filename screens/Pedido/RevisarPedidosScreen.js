@@ -1,5 +1,5 @@
-import React, { useEffect, useState , useRef} from 'react';
-import { View, Text, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, ScrollView, FlatList, TouchableOpacity, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import 'moment/locale/es-mx';
@@ -24,20 +24,16 @@ const RevisarPedidosScreen = () => {
       try {
         const data = await getVentas();
         setVentas(data);
-       
       } catch (error) {
         console.error('Error fetching ventas:', error);
       }
     };
     fetchVentas();
-    
-  },
-  [startDate, endDate]);
+  }, [startDate, endDate]);
 
   const handleLoadMore = () => {
     if (!isLoading) { // Verificar si no se está cargando actualmente
       setIsLoading(true); // Establecer isLoading en true para indicar que se está cargando
-      alert('Cargando más ventas...');
       setStartDate(moment(startDate).subtract(1, 'months').format('YYYY-MM-DD'));
       setEndDate(moment(endDate).subtract(1, 'months').format('YYYY-MM-DD'));
       setIsLoading(false); // Establecer isLoading en false cuando la carga haya terminado
@@ -112,10 +108,14 @@ const RevisarPedidosScreen = () => {
                     <Text style={styles.total}>Estado: {item.estado.toUpperCase()}</Text>
                   </View>
                 </TouchableOpacity>
-                
               )}
               onEndReached={handleLoadMore}
-              onEndReachedThreshold={1}
+              onEndReachedThreshold={0.1}
+              ListFooterComponent={ // Componente para el botón "Cargar más"
+                <View style={styles.loadMoreButtonContainer}>
+                  <Button title="Cargar más" onPress={handleLoadMore} />
+                </View>
+              }
             />
           </View>
         ))}
