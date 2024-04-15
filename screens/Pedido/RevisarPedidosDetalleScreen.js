@@ -15,13 +15,16 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
           <View style={styles.column}>
             <Text style={styles.title}>Fecha: </Text>
             <Text style={styles.detail}>{moment(detallePedido.fecha).locale('es-mx').format('LLLL')}</Text>
-            <Text style={styles.title}>Hora: </Text>
-            <Text style={styles.detail}>{moment(detallePedido.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
+            
             <Text style={styles.title}>Total: </Text>
             <Text style={styles.detail}>${detallePedido.total}</Text>
             <Text style={styles.title}>Método de pago: </Text>
+            <Text style={styles.detail}>{detallePedido.paymentMethod}</Text>
           </View>
+
           <View style={styles.column}>
+            <Text style={styles.title}>Hora: </Text>
+            <Text style={styles.detail}>{moment(detallePedido.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
             <Text style={styles.title}>Estado: </Text>
             <Text style={styles.detail}>{detallePedido.estado}</Text>
             {detallePedido.comments && 
@@ -30,7 +33,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
                 <Text style={styles.detail}>{detallePedido.comments}</Text>
               </View>
             }
-            <Text style={styles.detail}>{detallePedido.paymentMethod}</Text>
+           
             {
               detallePedido.referencia &&
               <View>
@@ -41,7 +44,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
             {detallePedido.cocina && <Text style={styles.title}>Preparado en cocina</Text>}
           </View>
         </View>
-        <View style={[styles.cardContainer, styles.productSection, {backgroundColor: '#C9F3D7'}]}>
+        <View style={[styles.cardContainer, styles.productSection]}>
           <FlatList
             data={detallePedido.pedido}
             keyExtractor={(item) => item._id}

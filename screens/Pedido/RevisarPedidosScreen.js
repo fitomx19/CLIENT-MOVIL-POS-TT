@@ -109,13 +109,7 @@ const RevisarPedidosScreen = () => {
                   </View>
                 </TouchableOpacity>
               )}
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.1}
-              ListFooterComponent={ // Componente para el botón "Cargar más"
-                <View style={styles.loadMoreButtonContainer}>
-                  <Button title="Cargar más" onPress={handleLoadMore} />
-                </View>
-              }
+              
             />
           </View>
         ))}

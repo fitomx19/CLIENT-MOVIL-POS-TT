@@ -1,16 +1,14 @@
 import { StyleSheet } from 'react-native';
 
 export const pedidoDetalleStyles = StyleSheet.create({ 
-    
-  
   subpedidoItemContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   subpedidoItemDetails: {
-      flex: 1,
+    flex: 1,
   },
   container: {
     padding: 20,
@@ -80,5 +78,24 @@ export const pedidoDetalleStyles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  // Estilos para la barra de búsqueda de productos
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    elevation: 2,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    fontSize: 16,
+    marginLeft: 5,
+  },
+  icon: {
+    marginLeft: 5,
   },
 });

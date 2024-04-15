@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: '#fff',
         elevation: 3,
-        padding: windowWidth * 0.02,
+        padding: windowWidth * 0.06,
         flexDirection: 'row', // Agregamos dirección de fila para la primera card
         justifyContent: 'space-between', // Distribuye los elementos horizontalmente
     },
@@ -26,8 +26,8 @@ const styles = StyleSheet.create({
         marginRight: windowWidth * 0.02, // Añade margen entre las columnas
     },
     productSection: {
-        backgroundColor: '#C9F3D7',
-        padding: windowWidth * 0.02,
+     
+        padding: windowWidth * 0.06,
         marginTop: windowWidth * 0.015,
     },
     title: {

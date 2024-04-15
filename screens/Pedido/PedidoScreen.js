@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, TextInput, Pressable, Alert, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TextInput, Pressable, Alert, ScrollView , Button} from 'react-native';
 import Total from './components/Total';
 import Pagar from './components/Pagar';
 import { getProductsFiltered } from '../Productos/ProductosScreenService';
@@ -17,9 +17,11 @@ const PedidosAddScreen = ({ navigation }) => {
   const [userEscaner, setUserEscaner] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const cameraRef = useRef(null);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
 
   const handleBarCodeScanned = ({ type, data }) => {
-    setUpdatedProduct({ ...producto, codigo_barras: data });
+    setSearchQuery( data );
     alert(`Se escaneo un código de barras tipo ${type} con el serial ${data}!`);
     setUserEscaner(false);
   };
@@ -63,7 +65,19 @@ const PedidosAddScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  const filteredProducts = products.filter(product => product.nombre.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredProducts = products.filter(product => {
+    const nombreLowerCase = product.nombre.toLowerCase();
+    const codigoBarras = product.codigo_barras.toString(); // Convertir a string para asegurar la comparación
+
+    // Buscar en el nombre del producto
+    if (nombreLowerCase.includes(searchQuery.toLowerCase())) {
+        return true; // El producto pasa el filtro si se encuentra en el nombre
+    }
+
+    // Si no se encuentra en el nombre, buscar en el código de barras
+    return codigoBarras.includes(searchQuery.toLowerCase());
+});
+
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -85,6 +99,15 @@ const PedidosAddScreen = ({ navigation }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const getCameraPermissions = async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === "granted");
+    };
+
+    getCameraPermissions();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Total total={total} setTotal={setTotal} />
@@ -96,13 +119,32 @@ const PedidosAddScreen = ({ navigation }) => {
             onChangeText={(text) => setSearchQuery(text)}
             value={searchQuery}
           />
-          <Pressable onPress={() => console.log("Escanear")}>
+          <Pressable onPress={() => setUserEscaner(true)}>
             <Icon name="barcode" size={20} color="black" style={styles.icon} />
           </Pressable>
-          <Pressable onPress={() => setIsCameraActive(true)}>
-            <Icon name="camera" size={20} color="black" style={styles.icon} />
-          </Pressable>
+          
         </View>
+        
+
+        {userEscaner ? (
+              hasPermission && (
+                <>
+                 <View style={styles.barCodeContainer}> 
+                <Camera
+                  style={[styles.camera, { aspectRatio: 4 / 3 }]} // Establece el aspectRatio de la cámara
+                  ref={cameraRef}
+                  onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                />
+
+                <Button title="Cancelar" onPress={() => setUserEscaner(false)} />
+                </View>
+                </>
+              )
+            ) : (
+              
+              <></>
+            )}
+       
         <ScrollView style={styles.scrollContainer}>
           {filteredProducts.length > 0 ? (
             <ListaProductos products={filteredProducts} />
@@ -131,9 +173,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     marginBottom: 20,
     marginTop: 10,
-
-    
   },
+   barCodeContainer : {
+         width: '100%',
+         height: '50%',
+    },
   input: {
     flex: 1,
     height: 40,

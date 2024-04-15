@@ -87,7 +87,7 @@ const LoginScreen = () => {
           <Text style={{color: 'white', marginLeft: 5}}>Recordar usuario</Text>
           
         </View>
-        <Text style={{color: 'white', fontSize:10}}>Version 0.0.5</Text>
+        <Text style={{color: 'white', fontSize:10}}>Version 0.1.0</Text>
       </View>
       
     </ImageBackground>
