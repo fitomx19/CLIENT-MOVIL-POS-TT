@@ -147,6 +147,15 @@ const PagoScreen = ({ route }) => {
           <Text style={styles.payButtonText}>Pagar</Text>
         )}
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={handlePayment} style={styles.guardarPedido} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.payButtonText}>Guardar pedido</Text>
+        )}
+      </TouchableOpacity>
+
     </ScrollView>
   );
 };

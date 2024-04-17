@@ -3,10 +3,73 @@ import { View, Text, ScrollView, FlatList } from "react-native";
 import moment from 'moment';
 import 'moment/locale/es-mx';
 import styles from "./RevisarPedidosDetalleScreen.style";
+import { Button } from "react-native-elements";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const RevisarPedidosDetalleScreen = ({ route }) => {
+  const navigation = useNavigation();
   const detallePedido = route.params.detallePedido;
   console.log("detallePedido 🥶 ", detallePedido);
+
+  const handleEditarPedido = async () => {
+    try {
+      // Obtener el subpedido previo de AsyncStorage
+      let previo = await AsyncStorage.getItem('subpedido');
+      console.log('Subpedido previo: ', previo);
+      
+      // Obtener el nuevo subpedido
+      let nuevo = detallePedido.pedido;
+  
+      // Formatear el nuevo subpedido para que coincida con la estructura del subpedido previo
+      nuevo = nuevo.map(item => {
+        let producto = item.producto;
+        let varianteId = item.variante;
+        
+        // Buscar la variante correspondiente al producto en el nuevo subpedido
+        let variante = null;
+        producto.variantes.forEach(v => {
+          if (v._id === varianteId) {
+            variante = v;
+          }
+        });
+  
+        if (variante) {
+          return {
+            _id: variante._id, // El _id es el id de la variante en el nuevo subpedido
+            nombre: variante.nombre, // El nombre es el nombre de la variante en el nuevo subpedido
+            cantidad: item.cantidad, // La cantidad es la cantidad del nuevo subpedido
+            precio_unitario: variante.precio, // El precio_unitario es el precio de la variante en el nuevo subpedido
+            productoOrigen: producto.nombre, // El productoOrigen es el nombre del producto en el nuevo subpedido
+            productoId: producto._id // El productoId es el id del producto en el nuevo subpedido
+          };
+        } else {
+          // Manejar el caso donde no se encuentra la variante
+          return {
+            _id: "ID predeterminado",
+            nombre: "Nombre predeterminado",
+            cantidad: 0,
+            precio_unitario: 0,
+            productoOrigen: "Producto predeterminado",
+            productoId: "ID predeterminado"
+          };
+        }
+      });
+  
+      // Guardar el nuevo subpedido formateado en AsyncStorage
+      await AsyncStorage.setItem('subpedido', JSON.stringify(nuevo));
+      console.log('Subpedido nuevo formateado: ', nuevo);
+    } catch (error) {
+      console.error('Error al editar el pedido: ', error);
+    }
+
+    //reenviar a la pantalla de pedidos
+    alert('Continuamos con el pedido ' , detallePedido.identificador);
+    navigation.navigate('PedidosScreen');
+  };
+  
+
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -45,6 +108,9 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
           </View>
         </View>
         <View style={[styles.cardContainer, styles.productSection]}>
+          <Button title="Continuar pedido" onPress={() => handleEditarPedido()} />
+          </View>
+        <View style={[styles.cardContainer, styles.buttonSection]}>
           <FlatList
             data={detallePedido.pedido}
             keyExtractor={(item) => item._id}

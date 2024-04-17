@@ -37,6 +37,13 @@ export const styles = StyleSheet.create({
       borderRadius: 5,
       alignItems: 'center',
     },
+    guardarPedido: {
+      marginTop: 20,
+      backgroundColor: 'red',
+      padding: 15,
+      borderRadius: 5,
+      alignItems: 'center',
+    },
     payButtonText: {
       color: '#fff',
       fontSize: 16,

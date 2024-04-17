@@ -30,6 +30,12 @@ const styles = StyleSheet.create({
         padding: windowWidth * 0.06,
         marginTop: windowWidth * 0.015,
     },
+
+    buttonSection : {
+        alignItems: 'center',
+        marginTop: windowWidth * 0.015,
+        alignSelf: 'center',
+    },
     title: {
         fontSize: windowWidth * 0.045,
         fontWeight: 'bold',
