@@ -2,11 +2,11 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const Pagar = ({ total }) => {
+const FinalizarPedido = ({ total }) => {
   const navigation = useNavigation();
 
   const navigateToPay = async () => {
-    navigation.navigate('PagoScreen', { total: total });
+    navigation.navigate('CortePedidoScreen', { total: total });
   };
 
   const handlePagar = () => {
@@ -43,4 +43,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Pagar;
+export default FinalizarPedido;

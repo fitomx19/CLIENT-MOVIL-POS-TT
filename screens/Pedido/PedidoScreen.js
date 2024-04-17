@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Text, TextInput, Pressable, Alert, ScrollView , Button} from 'react-native';
 import Total from './components/Total';
-import Pagar from './components/Pagar';
+import FinalizarPedido from './components/FinalizarPedido';
 import { getProductsFiltered } from '../Productos/ProductosScreenService';
 import ListaProductos from './components/ListaProductos';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -153,7 +153,7 @@ const PedidosAddScreen = ({ navigation }) => {
           )}
         </ScrollView>
       </View>
-      {total > 0 && <Pagar total={total} />}
+      {total > 0 && <FinalizarPedido total={total} />}
       {isCameraActive && <Camera ref={cameraRef} style={styles.camera} type={Camera.Constants.Type.front} />}
     </View>
   );

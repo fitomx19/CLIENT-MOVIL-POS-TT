@@ -14,23 +14,14 @@ import PedidoDetalleScreen from './screens/Pedido/PedidoDetalleScreen';
 import PagoScreen from './screens/Pago/PagoScreen';
 import RevisarPedidosScreen from './screens/Pedido/RevisarPedidosScreen';
 import RevisarPedidosDetalleScreen from './screens/Pedido/RevisarPedidosDetalleScreen';
-//import { Camera, CameraType } from 'expo-camera';
+import CortePedidoScreen from './screens/CortePedido/CortePedidoScreen';
+
+ 
 
 const Stack = createStackNavigator();
 
 export default function App  ()  {
-  //const [hasCameraPermission, setHasCameraPermission] = useState(null);
-
-  /*useEffect(() => { 
-    (async () => {
-      MediaLibrary.requestPermissionsAsync();
-      const cameraStatus = await Camera.requestPermissionsAsync(); 
-      setHasCameraPermission(cameraStatus.status === 'granted');
-    })(); 
-    
-  }
-  , []);
-  */2
+  
  
   return (
     <NavigationContainer>
@@ -52,6 +43,8 @@ export default function App  ()  {
         <Stack.Screen name="PagoScreen" component={PagoScreen} options={{headerTitle: ""}} />
         <Stack.Screen name="RevisarPedidosScreen" component={RevisarPedidosScreen}  options={{headerTitle: "Revisar pedidos"}} />
         <Stack.Screen name="RevisarPedidosDetalleScreen" component={RevisarPedidosDetalleScreen} options={{headerTitle: "Detalles de pedidos"}}  />
+        <Stack.Screen name="CortePedidoScreen" component={CortePedidoScreen} options={{headerTitle: "Corte de pedidos"}}  />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

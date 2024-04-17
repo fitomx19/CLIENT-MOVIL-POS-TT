@@ -2,19 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import { createTicket } from './PagoScreenService';
+import { createTicket } from './CortePedidoScreenService';
 import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
 import moment from 'moment-timezone';
-import {styles } from './PagoScreen.style';
+import {styles } from './CortePedidoScreen.style';
 
-const PagoScreen = ({ route }) => {
+const CortePedidoScreen = ({ route }) => {
   const navigation = useNavigation();
- 
+  const { total } = route.params;
   const [pedido, setPedido] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('temporal');
   const [comments, setComments] = useState('');
   const [referencia, setReferencia] = useState('');
+  const [estado, setEstado] = useState('preparando');
   const [cocina, setCocina] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null); // Estado para almacenar los datos decodificados del JWT
   const [loading, setLoading] = useState(false); // Estado para controlar la carga durante la transacción de pago
@@ -54,6 +55,7 @@ const PagoScreen = ({ route }) => {
       id_tienda: tienda,
       pedido: jsonPedido,
       paymentMethod,
+      estado,
       comments,
       referencia,
       cocina
@@ -88,23 +90,55 @@ const PagoScreen = ({ route }) => {
       setLoading(false); // Desbloquea el botón de pago después de completar la transacción
     }
   };
+  const handleSave = async () => {
+    // Bloquea el botón de pago para evitar pagos múltiples
+    setLoading(true);
 
-      // Función para calcular el total del pedido
-    const calcularTotal = () => {
-      let total = 0;
-      pedido.forEach(item => {
-        total += item.precio_unitario * item.cantidad;
-      });
-      return total;
+    const jsonPedido = pedido.map(item => ({
+      producto: item.productoId,
+      cantidad: item.cantidad,
+      precio: item.precio_unitario,
+      variante: item._id,
+    }));
+    const tienda = await AsyncStorage.getItem('tienda');
+    const orderData = {
+      id_tienda: tienda,
+      pedido: jsonPedido,
+      paymentMethod,
+      estado,
+      comments,
+      referencia,
+      cocina
     };
 
-    // Dentro del componente PagoScreen, antes del return:
-    const totalPedido = calcularTotal();
+   
 
+    console.log('Pedido JSON:', orderData);
+    try {
+      const hora_inicio = await AsyncStorage.getItem('hora_inicio');
+      const horaInicioDate = moment(hora_inicio).toDate();
+      orderData.id_usuario = decodedToken._id;
+      orderData.hora_inicio = horaInicioDate;
+      let horaFinDate = moment().tz('America/Mexico_City').format('YYYY-MM-DD HH:mm:ss')
+      horaFinDate = moment(horaFinDate).toDate();
+      orderData.hora_fin = horaFinDate;
+      console.log('Pedido a realizar:', orderData);
+      createTicket(orderData);
+      await AsyncStorage.removeItem('hora_inicio');
+      await AsyncStorage.removeItem('subpedido');
+      alert('Pedido realizado con éxito');
+      navigation.navigate('MenuScreen');
+    } catch (error) {
+      console.error('Error al realizar el pedido:', error);
+      alert('Error al realizar el pedido');
+    } finally {
+      setLoading(false); // Desbloquea el botón de pago después de completar la transacción
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.totalText}>Pedido final total: ${totalPedido.toFixed(2)}</Text>
+      <Text style={styles.totalText}>Corte de pedido actual ${total}.00</Text>
       <View style={styles.orderContainer}>
         {pedido.map(item => (
           <View key={item._id} style={styles.orderItem}>
@@ -160,11 +194,17 @@ const PagoScreen = ({ route }) => {
         )}
       </TouchableOpacity>
 
-     
+      <TouchableOpacity onPress={handleSave} style={styles.guardarPedido} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator size="small" color="#ffffff" />
+        ) : (
+          <Text style={styles.payButtonText}>Guardar pedido</Text>
+        )}
+      </TouchableOpacity>
 
     </ScrollView>
   );
 };
 
 
-export default PagoScreen;
+export default CortePedidoScreen;

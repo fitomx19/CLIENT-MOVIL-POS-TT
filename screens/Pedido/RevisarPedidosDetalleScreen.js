@@ -12,7 +12,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
   const detallePedido = route.params.detallePedido;
   console.log("detallePedido 🥶 ", detallePedido);
 
-  const handleEditarPedido = async () => {
+  const handleEditarPedido = async ( pay = false) => {
     try {
       // Obtener el subpedido previo de AsyncStorage
       let previo = await AsyncStorage.getItem('subpedido');
@@ -63,17 +63,33 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
       console.error('Error al editar el pedido: ', error);
     }
 
-    //reenviar a la pantalla de pedidos
-    alert('Continuamos con el pedido ' , detallePedido.identificador);
-    navigation.navigate('PedidosScreen');
+     //reenviar a la pantalla de pedidos
+     
+    await AsyncStorage.setItem('pedido_pago', JSON.stringify(detallePedido.identificador));
+    if(pay){
+      alert('Pagaremos el pedido :' + detallePedido.identificador);
+      navigation.navigate('PagoScreen');
+    }else{
+      alert('Continuamos con el pedido ' +  detallePedido.identificador);
+      navigation.navigate('PedidosScreen');
+    }
+    
   };
   
+  //reedirigir a la pantalla de pagar
+  const handlePagarPedido = async () => {
+    handleEditarPedido(true);   
+  };
 
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>{detallePedido.identificador}</Text>
+        <View style={[styles.cardContainer, styles.productSection]}>
+          <Button title="Continuar pedido" onPress={() => handleEditarPedido()} />
+          <Button title="Pagar pedido" onPress={() => handlePagarPedido()} />
+        </View>
         <View style={[styles.cardContainer, styles.twoColumns]}>
           <View style={styles.column}>
             <Text style={styles.title}>Fecha: </Text>
@@ -96,7 +112,6 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
                 <Text style={styles.detail}>{detallePedido.comments}</Text>
               </View>
             }
-           
             {
               detallePedido.referencia &&
               <View>
@@ -107,9 +122,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
             {detallePedido.cocina && <Text style={styles.title}>Preparado en cocina</Text>}
           </View>
         </View>
-        <View style={[styles.cardContainer, styles.productSection]}>
-          <Button title="Continuar pedido" onPress={() => handleEditarPedido()} />
-          </View>
+      
         <View style={[styles.cardContainer, styles.buttonSection]}>
           <FlatList
             data={detallePedido.pedido}
