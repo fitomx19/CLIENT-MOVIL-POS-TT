@@ -65,7 +65,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
 
      //reenviar a la pantalla de pedidos
      
-    await AsyncStorage.setItem('pedido_pago', JSON.stringify(detallePedido.identificador));
+    await AsyncStorage.setItem('pedido_pago', JSON.stringify(detallePedido._id));
     if(pay){
       alert('Pagaremos el pedido :' + detallePedido.identificador);
       navigation.navigate('PagoScreen');

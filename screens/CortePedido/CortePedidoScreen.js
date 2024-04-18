@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import { createTicket } from './CortePedidoScreenService';
+import { createTicket , editTicket } from './CortePedidoScreenService';
 import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
 import moment from 'moment-timezone';
@@ -55,10 +55,11 @@ const CortePedidoScreen = ({ route }) => {
       id_tienda: tienda,
       pedido: jsonPedido,
       paymentMethod,
-      estado,
+      estado: 'pagado',
       comments,
       referencia,
-      cocina
+      cocina,
+      total : total
     };
 
     //validar que paymentMethod no sea vacio
@@ -77,8 +78,17 @@ const CortePedidoScreen = ({ route }) => {
       let horaFinDate = moment().tz('America/Mexico_City').format('YYYY-MM-DD HH:mm:ss')
       horaFinDate = moment(horaFinDate).toDate();
       orderData.hora_fin = horaFinDate;
-      console.log('Pedido a realizar:', orderData);
-      createTicket(orderData);
+      const pedido_pago = await AsyncStorage.getItem('pedido_pago');
+      if(pedido_pago != null){
+        //eliminar la hora de inicio
+        delete orderData.hora_inicio;
+        //eliminar la hora de fin
+        delete orderData.hora_fin;
+        editTicket(orderData, pedido_pago);
+      }else{
+        console.log("🥶 vamos a crear el pedido " + orderData)
+        createTicket(orderData);
+      }
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
       alert('Pedido realizado con éxito');
@@ -108,11 +118,9 @@ const CortePedidoScreen = ({ route }) => {
       estado,
       comments,
       referencia,
-      cocina
+      cocina,
+      total : total
     };
-
-   
-
     console.log('Pedido JSON:', orderData);
     try {
       const hora_inicio = await AsyncStorage.getItem('hora_inicio');
@@ -123,7 +131,17 @@ const CortePedidoScreen = ({ route }) => {
       horaFinDate = moment(horaFinDate).toDate();
       orderData.hora_fin = horaFinDate;
       console.log('Pedido a realizar:', orderData);
-      createTicket(orderData);
+      const pedido_pago = await AsyncStorage.getItem('pedido_pago');
+      if(pedido_pago != null){
+        //eliminar la hora de inicio
+        delete orderData.hora_inicio;
+        //eliminar la hora de fin
+        delete orderData.hora_fin;
+        editTicket(orderData, pedido_pago);
+      }else{
+        console.log("🥶 vamos a crear el pedido " + orderData)
+        createTicket(orderData);
+      }
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
       alert('Pedido realizado con éxito');

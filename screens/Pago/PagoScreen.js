@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import { createTicket } from './PagoScreenService';
+import { createTicket , editTicket } from './PagoScreenService';
 import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
 import moment from 'moment-timezone';
@@ -55,8 +55,10 @@ const PagoScreen = ({ route }) => {
       pedido: jsonPedido,
       paymentMethod,
       comments,
+      estado: 'pagado',
       referencia,
-      cocina
+      cocina, 
+      total : calcularTotal()
     };
 
     //validar que paymentMethod no sea vacio
@@ -76,9 +78,21 @@ const PagoScreen = ({ route }) => {
       horaFinDate = moment(horaFinDate).toDate();
       orderData.hora_fin = horaFinDate;
       console.log('Pedido a realizar:', orderData);
-      createTicket(orderData);
+      const pedido_pago = await AsyncStorage.getItem('pedido_pago');
+
+      if(pedido_pago != null){
+        //eliminar fecha de inicio
+        delete orderData.hora_inicio;
+        console.log('Pedido a editar:', pedido_pago);
+        editTicket(orderData, pedido_pago);
+      }else{
+        console.log('Pedido a crear:', pedido_pago);
+        createTicket(orderData);
+      }
+
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
+      await AsyncStorage.removeItem('pedido_pago');
       alert('Pedido realizado con éxito');
       navigation.navigate('MenuScreen');
     } catch (error) {
