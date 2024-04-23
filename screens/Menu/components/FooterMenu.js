@@ -8,6 +8,11 @@ const FooterMenu = ({ navigation }) => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('subpedido');
+      await AsyncStorage.removeItem('role');
+      await AsyncStorage.removeItem('tienda');
+      //eliminar pedido_pago
+      await AsyncStorage.removeItem('pedido_pago');
+
       navigation.navigate('LoginScreen');
     } catch (error) {
       console.error('Error en el cierre de sesión:', error.message);

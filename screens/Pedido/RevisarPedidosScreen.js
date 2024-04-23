@@ -31,15 +31,7 @@ const RevisarPedidosScreen = () => {
     fetchVentas();
   }, [startDate, endDate]);
 
-  const handleLoadMore = () => {
-    if (!isLoading) { // Verificar si no se está cargando actualmente
-      setIsLoading(true); // Establecer isLoading en true para indicar que se está cargando
-      setStartDate(moment(startDate).subtract(1, 'months').format('YYYY-MM-DD'));
-      setEndDate(moment(endDate).subtract(1, 'months').format('YYYY-MM-DD'));
-      setIsLoading(false); // Establecer isLoading en false cuando la carga haya terminado
-    }
-  };
-
+   
   // Función para cambiar el orden de las ventas
   const toggleOrden = () => {
     setOrdenAscendente(!ordenAscendente);

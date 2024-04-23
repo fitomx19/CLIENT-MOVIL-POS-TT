@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Camera } from "expo-camera";
-import { enviarImagen, procesarImagenAsyncStorage } from './PedidoScreenService';
+
 
 const PedidosAddScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
@@ -19,6 +19,7 @@ const PedidosAddScreen = ({ navigation }) => {
   const cameraRef = useRef(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [imagenCapturada, setImagenCapturada] = useState(false);
 
   const handleBarCodeScanned = ({ type, data }) => {
     setSearchQuery( data );
@@ -79,32 +80,15 @@ const PedidosAddScreen = ({ navigation }) => {
 });
 
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      try {
-        const { uri } = await cameraRef.current.takePictureAsync();
-        console.log('Imagen capturada:', uri);
-        const imagen = await procesarImagenAsyncStorage(uri);
-        console.log('Imagen guardada en AsyncStorage:', imagen);
-      } catch (error) {
-        console.error('Error al capturar la imagen:', error);
-      }
-    }
-  };
+ 
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      takePicture();
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+ 
 
   useEffect(() => {
     const getCameraPermissions = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     };
-
     getCameraPermissions();
   }, []);
 
@@ -122,10 +106,8 @@ const PedidosAddScreen = ({ navigation }) => {
           <Pressable onPress={() => setUserEscaner(true)}>
             <Icon name="barcode" size={20} color="black" style={styles.icon} />
           </Pressable>
-          
         </View>
-        
-
+      
         {userEscaner ? (
               hasPermission && (
                 <>
@@ -147,7 +129,7 @@ const PedidosAddScreen = ({ navigation }) => {
        
         <ScrollView style={styles.scrollContainer}>
           {filteredProducts.length > 0 ? (
-            <ListaProductos products={filteredProducts} />
+            <ListaProductos products={filteredProducts}  />
           ) : (
             <Text>No se encontraron productos</Text>
           )}
@@ -201,6 +183,15 @@ const styles = StyleSheet.create({
     top: 0,
     zIndex: -1, // Para colocar la cámara detrás del contenido
   },
+  littlecamera : {
+    width: 50,
+    height: 50,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+     
+  }
 });
 
 export default PedidosAddScreen;

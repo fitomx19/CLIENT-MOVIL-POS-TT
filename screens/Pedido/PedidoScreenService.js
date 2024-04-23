@@ -13,7 +13,7 @@ export const enviarImagen = async (uri) => {
         name: 'photo.jpg',
       });
   
-      let response = await fetch('https://9fe2-187-189-101-144.ngrok-free.app/cargar_imagenes', {
+      let response = await fetch('https://emotion-recognition-i33brbtavq-uc.a.run.app/cargar_imagenes', {
         method: 'POST',
         body: formData,
         headers: {
@@ -42,31 +42,7 @@ const decodedToken = async () => {
 
 export const procesarImagenAsyncStorage = async (imagen) => {
     //identificador usuario
-    id_usuario = decodedToken._id;
-    console.log('id_usuario:', decodedToken);
-    //obtener la hora de inicio de storage
-    const hora_inicio = await AsyncStorage.getItem('hora_inicio');
-  
-    //revisar si en el storage ya existe más de 3 imagenes
-    let imagenes = await AsyncStorage.getItem('imagenes');
-    if (imagenes) {
-      imagenes = JSON.parse(imagenes);
-      if (imagenes.length >= 3) {
-        return;
-      }
-    } else {
-      imagenes = [];
-    }
-
-    //guardar la imagen en el storage
-    const imagenGuardada = {
-      id_usuario,
-      hora_inicio,
-      imagen,
-    };
-
-    imagenes.push(imagenGuardada);
-    await AsyncStorage.setItem('imagenes', JSON.stringify(imagenes));
-
-    console.log('Imagen guardada en AsyncStorage:', imagenGuardada);
+    datos = await enviarImagen(imagen);
+    console.log('Datos:', datos);
+    return datos;
 }

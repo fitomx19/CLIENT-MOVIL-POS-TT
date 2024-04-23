@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BASE_URL = ventas + 'admin/ventas';
 
-export const getVentas = async () => {
+export const getVentas = async (fecha = 1) => {
   try {
     const token = await AsyncStorage.getItem('token');
 
@@ -17,7 +17,7 @@ export const getVentas = async () => {
     const endDate = moment().format('YYYY-MM-DD');
 
     // Obtener la fecha de hace un mes
-    const startDate = moment().subtract(1, 'months').format('YYYY-MM-DD');
+    const startDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
 
     // Obtener la tienda del AsyncStorage
     const tienda = await AsyncStorage.getItem('tienda');

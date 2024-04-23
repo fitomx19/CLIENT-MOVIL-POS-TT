@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
@@ -7,6 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
 import moment from 'moment-timezone';
 import {styles } from './CortePedidoScreen.style';
+import { Camera } from "expo-camera";
+import { enviarImagen, procesarImagenAsyncStorage } from '../Pedido/PedidoScreenService';
+
 
 const CortePedidoScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -19,7 +22,10 @@ const CortePedidoScreen = ({ route }) => {
   const [cocina, setCocina] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null); // Estado para almacenar los datos decodificados del JWT
   const [loading, setLoading] = useState(false); // Estado para controlar la carga durante la transacción de pago
-
+  const cameraRef = useRef(null);
+  const [activeCamera, setActiveCamera] = useState(true);
+  const [faceCoordinates, setFaceCoordinates] = useState(null);
+  
   const obtenerPedido = async () => {
     const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
     if (subpedidoGuardado) {
@@ -39,6 +45,16 @@ const CortePedidoScreen = ({ route }) => {
     setDecodedToken(decoded);
     console.log('Token decodificado:', decoded);
   };
+
+
+  useEffect(() => {
+    console.log('Iniciando temporizador');
+    const timer = setTimeout(() => {
+      takePicture();
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const handlePayment = async () => {
     // Bloquea el botón de pago para evitar pagos múltiples
@@ -79,15 +95,19 @@ const CortePedidoScreen = ({ route }) => {
       horaFinDate = moment(horaFinDate).toDate();
       orderData.hora_fin = horaFinDate;
       const pedido_pago = await AsyncStorage.getItem('pedido_pago');
+      console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
       if(pedido_pago != null){
         //eliminar la hora de inicio
         delete orderData.hora_inicio;
         //eliminar la hora de fin
         delete orderData.hora_fin;
         editTicket(orderData, pedido_pago);
+        //eliminar el pedido_pago
+        await AsyncStorage.removeItem('pedido_pago');
       }else{
         console.log("🥶 vamos a crear el pedido " + orderData)
         createTicket(orderData);
+        await AsyncStorage.removeItem('pedido_pago');
       }
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
@@ -132,15 +152,20 @@ const CortePedidoScreen = ({ route }) => {
       orderData.hora_fin = horaFinDate;
       console.log('Pedido a realizar:', orderData);
       const pedido_pago = await AsyncStorage.getItem('pedido_pago');
+      console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
       if(pedido_pago != null){
         //eliminar la hora de inicio
+        console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
         delete orderData.hora_inicio;
         //eliminar la hora de fin
         delete orderData.hora_fin;
         editTicket(orderData, pedido_pago);
+        //eliminar el pedido_pago
+        await AsyncStorage.removeItem('pedido_pago');
       }else{
         console.log("🥶 vamos a crear el pedido " + orderData)
         createTicket(orderData);
+        await AsyncStorage.removeItem('pedido_pago');
       }
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
@@ -154,9 +179,61 @@ const CortePedidoScreen = ({ route }) => {
     }
   };
 
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      try {
+        const { uri } = await cameraRef.current.takePictureAsync();
+        console.log('Imagen capturada: 😗', uri);
+        setActiveCamera(false);
+        const imagen = await procesarImagenAsyncStorage(uri);
+        alert('Imagen capturada, el usuario esta: ' + imagen["emocion_predominante"] + " luces " +imagen["nivel_estres"]);
+      } catch (error) {
+        console.error('Error al capturar la imagen:', error);
+      }
+    }
+  };
+
+  const handleFacesDetected = ({ faces }) => {
+    if (faces.length > 0) {
+      // Solo tomamos las coordenadas del primer rostro detectado
+      const face = faces[0];
+      setFaceCoordinates(face.bounds); // Establecer las coordenadas del rostro
+    } else {
+      setFaceCoordinates(null); // Si no se detecta ningún rostro, limpiar las coordenadas
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.totalText}>Corte de pedido actual ${total}.00</Text>
+      <View style={{alignContent:"center" , alignItems: "center"}}>
+      {
+        activeCamera ? (
+          <Camera
+            style={styles.littlecamera}
+            ref={cameraRef}
+            type={Camera.Constants.Type.front}
+            onFacesDetected={handleFacesDetected}
+          />
+          
+        ) : null
+      }
+      {faceCoordinates && ( // Mostrar la caja solo si hay coordenadas de rostro disponibles
+            <View
+              style={{
+                position: 'absolute',
+                top: faceCoordinates.origin.y,
+                left: faceCoordinates.origin.x,
+                width: faceCoordinates.size.width,
+                height: faceCoordinates.size.height,
+                borderWidth: 2,
+                borderColor: 'red',
+                borderRadius: 5,
+                opacity: 0.5,
+              }}
+            />
+          )}
+      </View>
       <View style={styles.orderContainer}>
         {pedido.map(item => (
           <View key={item._id} style={styles.orderItem}>

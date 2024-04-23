@@ -88,7 +88,10 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
         <Text style={styles.title}>{detallePedido.identificador}</Text>
         <View style={[styles.cardContainer, styles.productSection]}>
           <Button title="Continuar pedido" onPress={() => handleEditarPedido()} />
-          <Button title="Pagar pedido" onPress={() => handlePagarPedido()} />
+          {
+              detallePedido.estado === 'pagado' ? null :  <Button title="Pagar pedido" onPress={() => handlePagarPedido()} />
+            }
+         
         </View>
         <View style={[styles.cardContainer, styles.twoColumns]}>
           <View style={styles.column}>
@@ -105,7 +108,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
             <Text style={styles.title}>Hora: </Text>
             <Text style={styles.detail}>{moment(detallePedido.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
             <Text style={styles.title}>Estado: </Text>
-            <Text style={styles.detail}>{detallePedido.estado}</Text>
+            
             {detallePedido.comments && 
               <View>
                 <Text style={styles.title}>Comentarios:</Text>
