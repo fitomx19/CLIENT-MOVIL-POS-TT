@@ -13,11 +13,15 @@ export const getVentas = async (fecha = 1) => {
       'Content-Type': 'application/json',
     };
 
-    // Obtener la fecha actual
-    const endDate = moment().format('YYYY-MM-DD');
+    
+    // Obtener la fecha de hace un dia
+    const startDate = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
-    // Obtener la fecha de hace un mes
-    const startDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
+    // Obtener la fecha actual mas un dia
+    const endDate = moment().add(2 , 'days').format('YYYY-MM-DD');
+
+    console.log('startDate:', startDate);
+    console.log('endDate:', endDate);
 
     // Obtener la tienda del AsyncStorage
     const tienda = await AsyncStorage.getItem('tienda');

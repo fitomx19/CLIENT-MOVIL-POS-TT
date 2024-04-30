@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Picker } from '@react-native-picker/picker';
-import { createTicket , editTicket } from './CortePedidoScreenService';
+import { handlePayment,handleSave } from './CortePedidoHooks';
 import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
-import moment from 'moment-timezone';
 import {styles } from './CortePedidoScreen.style';
 import { Camera } from "expo-camera";
 import { enviarImagen, procesarImagenAsyncStorage } from '../Pedido/PedidoScreenService';
@@ -18,6 +17,7 @@ const CortePedidoScreen = ({ route }) => {
   const [paymentMethod, setPaymentMethod] = useState('temporal');
   const [comments, setComments] = useState('');
   const [referencia, setReferencia] = useState('');
+  const [mesa, setMesa] = useState('');
   const [estado, setEstado] = useState('preparando');
   const [cocina, setCocina] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null); // Estado para almacenar los datos decodificados del JWT
@@ -25,6 +25,7 @@ const CortePedidoScreen = ({ route }) => {
   const cameraRef = useRef(null);
   const [activeCamera, setActiveCamera] = useState(true);
   const [faceCoordinates, setFaceCoordinates] = useState(null);
+  const [loadingCamera, setLoadingCamera] = useState(true);
   
   const obtenerPedido = async () => {
     const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -51,149 +52,30 @@ const CortePedidoScreen = ({ route }) => {
     console.log('Iniciando temporizador');
     const timer = setTimeout(() => {
       takePicture();
-    }, 3000);
+    }, 1500);
     
     return () => clearTimeout(timer);
   }, []);
 
-  const handlePayment = async () => {
-    // Bloquea el botón de pago para evitar pagos múltiples
-    setLoading(true);
 
-    const jsonPedido = pedido.map(item => ({
-      producto: item.productoId,
-      cantidad: item.cantidad,
-      precio: item.precio_unitario,
-      variante: item._id,
-    }));
-    const tienda = await AsyncStorage.getItem('tienda');
-    const orderData = {
-      id_tienda: tienda,
-      pedido: jsonPedido,
-      paymentMethod,
-      estado: 'pagado',
-      comments,
-      referencia,
-      cocina,
-      total : total
-    };
-
-    //validar que paymentMethod no sea vacio
-    if (paymentMethod ==  "") {
-      alert('Selecciona un método de pago');
-      setLoading(false); // Desbloquea el botón de pago
-      return;
-    }
-
-    console.log('Pedido JSON:', orderData);
-    try {
-      const hora_inicio = await AsyncStorage.getItem('hora_inicio');
-      const horaInicioDate = moment(hora_inicio).toDate();
-      orderData.id_usuario = decodedToken._id;
-      orderData.hora_inicio = horaInicioDate;
-      let horaFinDate = moment().tz('America/Mexico_City').format('YYYY-MM-DD HH:mm:ss')
-      horaFinDate = moment(horaFinDate).toDate();
-      orderData.hora_fin = horaFinDate;
-      const pedido_pago = await AsyncStorage.getItem('pedido_pago');
-      console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
-      if(pedido_pago != null){
-        //eliminar la hora de inicio
-        delete orderData.hora_inicio;
-        //eliminar la hora de fin
-        delete orderData.hora_fin;
-        editTicket(orderData, pedido_pago);
-        //eliminar el pedido_pago
-        await AsyncStorage.removeItem('pedido_pago');
-      }else{
-        console.log("🥶 vamos a crear el pedido " + orderData)
-        createTicket(orderData);
-        await AsyncStorage.removeItem('pedido_pago');
-      }
-      await AsyncStorage.removeItem('hora_inicio');
-      await AsyncStorage.removeItem('subpedido');
-      alert('Pedido realizado con éxito');
-      navigation.navigate('MenuScreen');
-    } catch (error) {
-      console.error('Error al realizar el pedido:', error);
-      alert('Error al realizar el pedido');
-    } finally {
-      setLoading(false); // Desbloquea el botón de pago después de completar la transacción
-    }
-  };
-  const handleSave = async () => {
-    // Bloquea el botón de pago para evitar pagos múltiples
-    setLoading(true);
-
-    const jsonPedido = pedido.map(item => ({
-      producto: item.productoId,
-      cantidad: item.cantidad,
-      precio: item.precio_unitario,
-      variante: item._id,
-    }));
-    const tienda = await AsyncStorage.getItem('tienda');
-    const orderData = {
-      id_tienda: tienda,
-      pedido: jsonPedido,
-      paymentMethod,
-      estado,
-      comments,
-      referencia,
-      cocina,
-      total : total
-    };
-    console.log('Pedido JSON:', orderData);
-    try {
-      const hora_inicio = await AsyncStorage.getItem('hora_inicio');
-      const horaInicioDate = moment(hora_inicio).toDate();
-      orderData.id_usuario = decodedToken._id;
-      orderData.hora_inicio = horaInicioDate;
-      let horaFinDate = moment().tz('America/Mexico_City').format('YYYY-MM-DD HH:mm:ss')
-      horaFinDate = moment(horaFinDate).toDate();
-      orderData.hora_fin = horaFinDate;
-      console.log('Pedido a realizar:', orderData);
-      const pedido_pago = await AsyncStorage.getItem('pedido_pago');
-      console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
-      if(pedido_pago != null){
-        //eliminar la hora de inicio
-        console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
-        delete orderData.hora_inicio;
-        //eliminar la hora de fin
-        delete orderData.hora_fin;
-        editTicket(orderData, pedido_pago);
-        //eliminar el pedido_pago
-        await AsyncStorage.removeItem('pedido_pago');
-      }else{
-        console.log("🥶 vamos a crear el pedido " + orderData)
-        createTicket(orderData);
-        await AsyncStorage.removeItem('pedido_pago');
-      }
-      await AsyncStorage.removeItem('hora_inicio');
-      await AsyncStorage.removeItem('subpedido');
-      alert('Pedido realizado con éxito');
-      navigation.navigate('MenuScreen');
-    } catch (error) {
-      console.error('Error al realizar el pedido:', error);
-      alert('Error al realizar el pedido');
-    } finally {
-      setLoading(false); // Desbloquea el botón de pago después de completar la transacción
-    }
-  };
 
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
         const { uri } = await cameraRef.current.takePictureAsync();
-        console.log('Imagen capturada: 😗', uri);
         setActiveCamera(false);
         const imagen = await procesarImagenAsyncStorage(uri);
+        setLoadingCamera(false);
         alert('Imagen capturada, el usuario esta: ' + imagen["emocion_predominante"] + " luces " +imagen["nivel_estres"]);
       } catch (error) {
+        alert('Error al capturar la imagen, rostro no detectado');
         console.error('Error al capturar la imagen:', error);
       }
     }
   };
 
   const handleFacesDetected = ({ faces }) => {
+    console.log('Rostros detectados:', faces);
     if (faces.length > 0) {
       // Solo tomamos las coordenadas del primer rostro detectado
       const face = faces[0];
@@ -205,16 +87,23 @@ const CortePedidoScreen = ({ route }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.totalText}>Corte de pedido actual ${total}.00</Text>
+      <Text style={styles.totalText}>Corte de pedido actual: ${total}.00</Text>
       <View style={{alignContent:"center" , alignItems: "center"}}>
       {
         activeCamera ? (
+          <>
+          
+          <View style={styles.DivcameraContainer}>
           <Camera
             style={styles.littlecamera}
             ref={cameraRef}
             type={Camera.Constants.Type.front}
-            onFacesDetected={handleFacesDetected}
+            quality={0.5}
+            size={{ width: 400, height: 400 }}
+            //onFacesDetected={handleFacesDetected}
           />
+          </View>
+          </>
           
         ) : null
       }
@@ -274,28 +163,49 @@ const CortePedidoScreen = ({ route }) => {
          </>
         ) : null
      }
-      <Text style={{ marginTop: 10, marginBottom: 10 }}>¿Requiere Cocina?</Text>
-      <Button
-        title={cocina ? 'Sí' : 'No'}
-        buttonStyle={{ marginBottom: 10 }}
-        onPress={() => setCocina(!cocina)}
+     <View style={styles.switchContainer}>
+      <Text style={styles.switchText}>¿Requiere Cocina?</Text>
+      <Switch
+        value={cocina}
+        onValueChange={() => setCocina(!cocina)}
+        style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }] }}
       />
-      {/* Bloquea el botón de pago y muestra un indicador de carga si loading es true */}
-      <TouchableOpacity onPress={handlePayment} style={styles.payButton} disabled={loading}>
-        {loading ? (
+    </View>
+    <View style={styles.mesaContainer}>
+      <Text style={styles.mesaText}>Mesa</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Mesa"
+        value={mesa}
+        onChangeText={text => setMesa(text)}
+      />
+    </View>
+
+
+       
+      
+        <TouchableOpacity onPress={ () => handlePayment(pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation)} style={styles.payButton} disabled={loading}>
+        {loading   ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
           <Text style={styles.payButtonText}>Pagar</Text>
         )}
       </TouchableOpacity>
+         
+      
 
-      <TouchableOpacity onPress={handleSave} style={styles.guardarPedido} disabled={loading}>
-        {loading ? (
+     
+      
+        <TouchableOpacity onPress={() => handleSave(pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation)} style={styles.guardarPedido} disabled={loading}>
+        {loading  ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
           <Text style={styles.payButtonText}>Guardar pedido</Text>
         )}
       </TouchableOpacity>
+      
+
+     
 
     </ScrollView>
   );

@@ -8,6 +8,10 @@ export const styles = StyleSheet.create({
     totalText: {
       fontSize: 18,
       marginBottom: 20,
+      alignContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      textAlign: 'center',
     },
     orderContainer: {
       marginBottom: 20,
@@ -49,13 +53,23 @@ export const styles = StyleSheet.create({
       fontSize: 16,
     },
     littlecamera : {
-      width: 500,
-      height: 500,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      top: 0,
-       
-    }
+      width: 300,
+      height: 300
+    },
+    switchContainer: {
+      flexDirection: 'row', // Alineación en fila
+      alignItems: 'center', // Alinear elementos verticalmente al centro
+    },
+    switchText: {
+      flex: 1, // Que el texto ocupe el espacio restante
+      marginBottom: 10,
+    },
+    DivcameraContainer: {
+      flex: 1,
+      paddingLeft: 100,
+      paddingRight: 100,
+      paddingTop: 20,
+      paddingBottom: 50,
+    },
   });
   
