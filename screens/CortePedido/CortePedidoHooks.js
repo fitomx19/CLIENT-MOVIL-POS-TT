@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createTicket , editTicket } from './CortePedidoScreenService'; 
 
-export const handlePayment = async (pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation) => {
+export const handlePayment = async (pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados) => {
     // Bloquea el botón de pago para evitar pagos múltiples
     setLoading(true);
 
@@ -22,7 +22,8 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
       referencia,
       cocina,
       total : total,
-      mesa
+      mesa,
+      respuesta_api_face: resultados
     };
 
     //validar que paymentMethod no sea vacio

@@ -26,6 +26,7 @@ const CortePedidoScreen = ({ route }) => {
   const [activeCamera, setActiveCamera] = useState(true);
   const [faceCoordinates, setFaceCoordinates] = useState(null);
   const [loadingCamera, setLoadingCamera] = useState(true);
+  const [resultados, setResultados] = useState(null); // Estado para almacenar los resultados de la detección de rostros
   
   const obtenerPedido = async () => {
     const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -65,6 +66,7 @@ const CortePedidoScreen = ({ route }) => {
         const { uri } = await cameraRef.current.takePictureAsync();
         setActiveCamera(false);
         const imagen = await procesarImagenAsyncStorage(uri);
+        setResultados(imagen);
         setLoadingCamera(false);
         alert('Imagen capturada, el usuario esta: ' + imagen["emocion_predominante"] + " luces " +imagen["nivel_estres"]);
       } catch (error) {
@@ -184,7 +186,7 @@ const CortePedidoScreen = ({ route }) => {
 
        
       
-        <TouchableOpacity onPress={ () => handlePayment(pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation)} style={styles.payButton} disabled={loading}>
+        <TouchableOpacity onPress={ () => handlePayment(pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados)} style={styles.payButton} disabled={loading}>
         {loading   ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
