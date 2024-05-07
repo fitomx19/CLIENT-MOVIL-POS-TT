@@ -145,13 +145,7 @@ const CortePedidoScreen = ({ route }) => {
         <Picker.Item label="Tarjeta" value="tarjeta" />
         <Picker.Item label="Transferencia" value="transferencia" />
       </Picker>
-      <Text> Comentarios </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Comentarios"
-        value={comments}
-        onChangeText={text => setComments(text)}
-      />
+     
      {
         paymentMethod === 'transferencia' || paymentMethod === 'tarjeta' ? (
          <> 
@@ -182,6 +176,13 @@ const CortePedidoScreen = ({ route }) => {
         onChangeText={text => setMesa(text)}
       />
     </View>
+    <Text> Comentarios </Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Comentarios"
+        value={comments}
+        onChangeText={text => setComments(text)}
+      />
 
 
        
@@ -193,12 +194,9 @@ const CortePedidoScreen = ({ route }) => {
           <Text style={styles.payButtonText}>Pagar</Text>
         )}
       </TouchableOpacity>
-         
+              
       
-
-     
-      
-        <TouchableOpacity onPress={() => handleSave(pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation)} style={styles.guardarPedido} disabled={loading}>
+        <TouchableOpacity onPress={() => handleSave(pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados)} style={styles.guardarPedido} disabled={loading}>
         {loading  ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (

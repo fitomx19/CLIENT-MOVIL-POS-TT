@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 const RevisarPedidosDetalleScreen = ({ route }) => {
   const navigation = useNavigation();
   const detallePedido = route.params.detallePedido;
-  console.log("detallePedido 🥶 ", detallePedido);
+  //console.log("detallePedido 🥶 ", detallePedido);
 
   const handleEditarPedido = async ( pay = false) => {
     try {
@@ -87,7 +87,9 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
       <View style={styles.container}>
         <Text style={styles.title}>{detallePedido.identificador}</Text>
         <View style={[styles.cardContainer, styles.productSection]}>
-          <Button title="Continuar pedido" onPress={() => handleEditarPedido()} />
+         {
+          detallePedido.estado === 'pagado' ? <Text style={styles.title}>Pedido pagado</Text> :  <Button title="Continuar pedido" onPress={() => handleEditarPedido()} />
+         }
           {
               detallePedido.estado === 'pagado' ? null :  <Button title="Pagar pedido" onPress={() => handlePagarPedido()} />
             }
@@ -107,7 +109,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
           <View style={styles.column}>
             <Text style={styles.title}>Hora: </Text>
             <Text style={styles.detail}>{moment(detallePedido.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
-            <Text style={styles.title}>Estado: </Text>
+            
             
             {detallePedido.comments && 
               <View>

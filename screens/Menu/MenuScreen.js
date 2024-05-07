@@ -50,12 +50,12 @@ const MenuScreen = ({ navigation }) => {
       }
       <FlatList
         data={[
-          { key: 'Crear pedido', icon: 'cart-plus', action: () => navigation.navigate('PedidosScreen'), description: 'Crear un nuevo pedido' },
+          { key: 'Crear pedido', icon: 'cart-plus', action: () => navigation.navigate('PedidosScreen'), description: 'Nuevo pedido' },
           { 
             key: 'Revisar pedidos', 
-            icon: 'list', 
+            icon: 'sticky-note', 
             action: () => navigation.navigate('RevisarPedidosScreen'), 
-            description: 'Revisar los pedidos' 
+            description: 'Pedidos' 
           }
         ]}
         numColumns={2}

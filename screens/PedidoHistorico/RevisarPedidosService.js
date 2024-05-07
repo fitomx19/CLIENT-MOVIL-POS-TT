@@ -2,9 +2,9 @@ import moment from 'moment';
 import { ventas } from "../../enviroment"; // Suponiendo que "ventas" es una variable exportada desde el archivo de entorno
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = ventas + 'admin/ventas/estado';
+const BASE_URL = ventas + 'admin/ventas';
 
-export const getVentas = async () => {
+export const getVentas = async (fecha = 1) => {
   try {
     const token = await AsyncStorage.getItem('token');
 
@@ -13,10 +13,20 @@ export const getVentas = async () => {
       'Content-Type': 'application/json',
     };
 
+    
+    // Obtener la fecha de hace un dia
+    const startDate = moment().subtract(1, 'days').format('YYYY-MM-DD');
+
+    // Obtener la fecha actual mas un dia
+    const endDate = moment().add(2 , 'days').format('YYYY-MM-DD');
+
+    console.log('startDate:', startDate);
+    console.log('endDate:', endDate);
+
     // Obtener la tienda del AsyncStorage
     const tienda = await AsyncStorage.getItem('tienda');
 
-    const queryParams = `tienda=${tienda}`;
+    const queryParams = `startDate=${startDate}&endDate=${endDate}&tienda=${tienda}`;
     const urlWithParams = `${BASE_URL}?${queryParams}`;
 
     const response = await fetch(urlWithParams, {

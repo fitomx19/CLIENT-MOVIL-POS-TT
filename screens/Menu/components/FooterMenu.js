@@ -26,6 +26,12 @@ const FooterMenu = ({ navigation }) => {
 
   let data = [
     { 
+      key: 'RevisarPedidoHistoricoScreen', 
+      icon: 'list', 
+      action: () => navigation.navigate('RevisarPedidoHistoricoScreen'), 
+      description: 'Revisar Historial de Pedidos' 
+    },
+    { 
       key: 'Administrar Inventario', 
       icon: 'list-alt', 
       action: () => navigation.navigate('ProductScreen'), 

@@ -6,6 +6,7 @@ import handleLogin from './LoginScreenService';
 import styles from './LoginScreen.style';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -87,7 +88,7 @@ const LoginScreen = () => {
           <Text style={{color: 'white', marginLeft: 5}}>Recordar usuario</Text>
           
         </View>
-        <Text style={{color: 'white', fontSize:10}}>Version 0.4.0</Text>
+        <Text style={{color: 'white', fontSize:10}}>Version 0.4.1</Text>
       </View>
       
     </ImageBackground>

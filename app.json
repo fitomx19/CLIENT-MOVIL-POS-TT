@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "POS-movil",
-    "slug": "POS-movil",
-    "version": "1.0.0",
+    "name": "POS ++",
+    "slug": "POS ++",
+    "version": "0.5.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

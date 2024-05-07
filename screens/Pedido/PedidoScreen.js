@@ -18,8 +18,7 @@ const PedidosAddScreen = ({ navigation }) => {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const cameraRef = useRef(null);
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [imagenCapturada, setImagenCapturada] = useState(false);
+  const [scanned, setScanned] = useState(false); 
 
   const handleBarCodeScanned = ({ type, data }) => {
     setSearchQuery( data );

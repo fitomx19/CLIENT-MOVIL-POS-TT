@@ -70,7 +70,7 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
   };
 
 
-export const handleSave = async (pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation) => {
+export const handleSave = async (pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados) => {
     // Bloquea el botón de pago para evitar pagos múltiples
     setLoading(true);
     console.log("🥶 vamos a guardar el pedido")
@@ -92,7 +92,8 @@ export const handleSave = async (pedido,paymentMethod,estado,comments,referencia
       referencia,
       cocina,
       total : total,
-      mesa
+      mesa,
+      respuesta_api_face: resultados
     };
     console.log('Pedido JSON:', orderData);
     try {
@@ -128,6 +129,6 @@ export const handleSave = async (pedido,paymentMethod,estado,comments,referencia
       console.error('Error al realizar el pedido:', error);
       alert('Error al realizar el pedido');
     } finally {
-      setLoading(false); // Desbloquea el botón de pago después de completar la transacción
+      setLoading(false); 
     }
   };

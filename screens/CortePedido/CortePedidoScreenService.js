@@ -40,8 +40,7 @@ export const editTicket = async (product, identificador) => {
       //convertir a string el identificador
       identificador = identificador.toString();
       identificador = identificador.replace(/"/g, ''); // Esto eliminará todas las comillas dobles del identificador
-      console.log('Informacioin a incluir o modificar:', product);  
-  
+       
       const token = await AsyncStorage.getItem('token');
       const headers = {
         Authorization: `Bearer ${token}`,

@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
       borderColor: '#ccc',
       borderRadius: 5,
       marginBottom: 10,
+      fontSize: 16,
     },
     input: {
       borderWidth: 1,

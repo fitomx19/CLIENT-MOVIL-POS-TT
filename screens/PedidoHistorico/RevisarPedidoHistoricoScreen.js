@@ -8,13 +8,12 @@ import Spinner from '../../globalComponents/Spinner';
 import { getVentas } from './RevisarPedidosService';
 import styles from './RevisarPedidosScreen.style'; // Importamos los estilos
 
-const RevisarPedidosScreen = () => {
+const RevisarPedidoHistoricoScreen = () => {
   const [ventas, setVentas] = useState([]);
   const [ordenAscendente, setOrdenAscendente] = useState(true);
   const [numColumns, setNumColumns] = useState(1);
   const [startDate, setStartDate] = useState(moment().subtract(1, 'months').format('YYYY-MM-DD'));
-  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD'));
-  const [isLoading, setIsLoading] = useState(false); // Bandera para controlar la carga
+  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD')); 
   const flatListRef = useRef(null);
   const navigation = useNavigation();
 
@@ -31,6 +30,7 @@ const RevisarPedidosScreen = () => {
     fetchVentas();
   }, [startDate, endDate]);
 
+   
   // Función para cambiar el orden de las ventas
   const toggleOrden = () => {
     setOrdenAscendente(!ordenAscendente);
@@ -50,20 +50,20 @@ const RevisarPedidosScreen = () => {
     navigation.navigate('RevisarPedidosDetalleScreen', { detallePedido: item });
   };
 
-  // Función para agrupar los pedidos por estado
-  const groupByEstado = (ventas) => {
+  // Función para agrupar los pedidos por fecha
+  const groupByDate = (ventas) => {
     return ventas.reduce((result, venta) => {
-      const estado = venta.estado;
-      if (!result[estado]) {
-        result[estado] = [];
+      const fecha = moment(venta.fecha).format('YYYY-MM-DD');
+      if (!result[fecha]) {
+        result[fecha] = [];
       }
-      result[estado].push(venta);
+      result[fecha].push(venta);
       return result;
     }, {});
   };
 
-  // Agrupar los pedidos por estado
-  const ventasAgrupadas = groupByEstado(ventas);
+  // Agrupar los pedidos por fecha
+  const ventasAgrupadas = groupByDate(ventas);
 
   return (
     <ScrollView>
@@ -77,17 +77,14 @@ const RevisarPedidosScreen = () => {
       </View>
       <View style={styles.container}>
         {
-          ventas.length === 0 && <Text>No hay pedidos</Text>
+          ventas.length === 0 && <Spinner />
         }
-        {
-          ventas === null && <Text>Error , mande mensaje al administrados</Text> 
-        }
-        {Object.entries(ventasAgrupadas).map(([estado, ventasPorEstado]) => (
-          <View key={estado}>
-            <Text style={styles.title}>{estado.toUpperCase()}</Text>
+        {Object.entries(ventasAgrupadas).map(([fecha, ventasPorFecha]) => (
+          <View key={fecha}>
+            <Text style={styles.title}>{moment(fecha).locale('es-mx').format('dddd LL')}</Text>
             <FlatList
               ref={flatListRef}
-              data={ventasPorEstado}
+              data={ventasPorFecha}
               key={numColumns}
               style={styles.flatListContainer}
               numColumns={numColumns}
@@ -103,6 +100,7 @@ const RevisarPedidosScreen = () => {
                   </View>
                 </TouchableOpacity>
               )}
+              
             />
           </View>
         ))}
@@ -111,4 +109,4 @@ const RevisarPedidosScreen = () => {
   );
 };
 
-export default RevisarPedidosScreen;
+export default RevisarPedidoHistoricoScreen;
