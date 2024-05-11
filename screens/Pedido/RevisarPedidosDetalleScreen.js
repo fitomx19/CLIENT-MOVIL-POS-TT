@@ -71,7 +71,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
       Dialog.show({
         type: ALERT_TYPE.SUCCESS,
         title: 'Pedido',
-        textBody: `Pagaremos el pedido : + detallePedido.identificador`,
+        textBody: `Pagaremos el pedido :  ${detallePedido.identificador} `,
         autoClose: 5000,
       })
       navigation.navigate('PagoScreen');
@@ -79,7 +79,7 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
       Dialog.show({
         type: ALERT_TYPE.SUCCESS,
         title: 'Pedido',
-        textBody: `Continuaremos con el pedido : + detallePedido.identificador`,
+        textBody: `Continuaremos con el pedido :  ${detallePedido.identificador}`,
         autoClose: 5000,
       })
 
