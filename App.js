@@ -43,7 +43,7 @@ export default function App  ()  {
         <Stack.Screen name="RevisarPedidosScreen" component={RevisarPedidosScreen}  options={{headerTitle: "Revisar pedidos"}} />
         <Stack.Screen name="RevisarPedidosDetalleScreen" component={RevisarPedidosDetalleScreen} options={{headerTitle: "Detalles de pedidos"}}  />
         <Stack.Screen name="CortePedidoScreen" component={CortePedidoScreen} options={{headerTitle: "Corte de pedidos"}}  />
-        <Stack.Screen name="RevisarPedidoHistoricoScreen" component={RevisarPedidoHistoricoScreen} options={{headerTitle: "Historial Pedidos"}}  />
+        <Stack.Screen name="RevisarPedidoHistoricoScreen" component={RevisarPedidoHistoricoScreen} options={{headerTitle: "Ventas última semana"}}  />
 
       </Stack.Navigator>
     </NavigationContainer>

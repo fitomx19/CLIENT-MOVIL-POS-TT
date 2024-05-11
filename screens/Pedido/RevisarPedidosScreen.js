@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import 'moment/locale/es-mx';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import Spinner from '../../globalComponents/Spinner';
 import { getVentas } from './RevisarPedidosService';
 import styles from './RevisarPedidosScreen.style'; // Importamos los estilos
@@ -13,10 +14,10 @@ const RevisarPedidosScreen = () => {
   const [ordenAscendente, setOrdenAscendente] = useState(true);
   const [numColumns, setNumColumns] = useState(1);
   const [startDate, setStartDate] = useState(moment().subtract(1, 'months').format('YYYY-MM-DD'));
-  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD'));
-  const [isLoading, setIsLoading] = useState(false); // Bandera para controlar la carga
+  const [endDate, setEndDate] = useState(moment().format('YYYY-MM-DD')); 
   const flatListRef = useRef(null);
   const navigation = useNavigation();
+  const [Asc,setAsc] = useState(true);
 
   // Función para obtener las ventas
   useEffect(() => {
@@ -38,11 +39,13 @@ const RevisarPedidosScreen = () => {
       return ordenAscendente ? b.fecha.localeCompare(a.fecha) : a.fecha.localeCompare(b.fecha);
     });
     setVentas(ventasOrdenadas);
+    setAsc(!Asc);
   };
 
   // Función para cambiar el número de columnas
   const toggleColumns = () => {
     setNumColumns(numColumns === 1 ? 2 : 1);
+
   };
 
   // Función para navegar al detalle de un pedido
@@ -69,7 +72,9 @@ const RevisarPedidosScreen = () => {
     <ScrollView>
       <View style={styles.iconContainer}>
         <TouchableOpacity onPress={toggleOrden} style={styles.iconButton}>
-          <Icon name="sort-alpha-asc" size={20} color="forestgreen" />
+          {
+            Asc ? <Icon name="sort-asc" size={20} color="forestgreen" /> : <Icon name="sort-desc" size={20} color="forestgreen" />
+          }
         </TouchableOpacity>
         <TouchableOpacity onPress={toggleColumns} style={styles.iconButton}>
           <Icon name={numColumns === 1 ? 'list' : 'th-large'} size={20} color="forestgreen" />
@@ -96,9 +101,9 @@ const RevisarPedidosScreen = () => {
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => navigateToDetalle(item)} style={styles.cardContainer}>
                   <View style={styles.itemContainer}>
-                    <Text style={styles.title2}>{item.identificador.substring(0, 18) + "-" + item.identificador.substring(18)}</Text>
-                    <Text style={styles.date}><Icon name={'calendar'} size={20} color="forestgreen" /> {moment(item.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
-                    <Text style={styles.date}><Icon name={'cutlery'} size={20} color="forestgreen" /> {item.mesa ? item.mesa : 'Sin mesa'}</Text>
+                  <Text style={styles.title2}>{item._id.substring(0, 18) + "-" + item._id.substring(18)}</Text>
+                    <Text style={styles.date}><Icon name={'clock-o'} size={20} color="forestgreen" /> {moment(item.fecha).locale('es-mx').format('HH:mm:ss')}</Text>
+                    <Text style={styles.date}><MaterialIcons name={'table-restaurant'} size={20} color="forestgreen" /> {item.mesa ? item.mesa : 'Sin mesa'}</Text>
                     <Text style={styles.date}><Icon name={'hourglass-1'} size={20} color="forestgreen" /> {item.estado}</Text>
                   </View>
                 </TouchableOpacity>

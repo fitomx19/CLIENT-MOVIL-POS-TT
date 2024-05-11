@@ -15,17 +15,16 @@ export const getVentas = async (fecha = 1) => {
 
     
     // Obtener la fecha de hace un dia
-    const startDate = moment().subtract(1, 'days').format('YYYY-MM-DD');
+    const startDate = moment().subtract(8, 'days').format('YYYY-MM-DD');
 
     // Obtener la fecha actual mas un dia
-    const endDate = moment().add(2 , 'days').format('YYYY-MM-DD');
+    const endDate = moment().format('YYYY-MM-DD');
 
     console.log('startDate:', startDate);
     console.log('endDate:', endDate);
 
     // Obtener la tienda del AsyncStorage
     const tienda = await AsyncStorage.getItem('tienda');
-
     const queryParams = `startDate=${startDate}&endDate=${endDate}&tienda=${tienda}`;
     const urlWithParams = `${BASE_URL}?${queryParams}`;
 
