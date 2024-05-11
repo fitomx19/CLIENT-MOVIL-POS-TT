@@ -1,20 +1,44 @@
-import { Alert } from 'react-native';
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 
 export default function handleAddHook(producto) {
     if (producto.nombre.trim() === '') {
-        Alert.alert('Error', 'El nombre del producto es requerido.');
-        return;
+
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'El nombre del producto es requerido',
+      })
+
+      return;
       }
       if (producto.descripcion.trim() === '') {
-        Alert.alert('Error', 'La descripcion del producto es requerido.');
-        return;
+        
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'La descripcion del pedido  es requerido',
+      })
+
+      return;
       }
       if (producto.imagen.trim() === '') {
-          Alert.alert('Error', 'La imagen del producto es requerido.');
+          
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'La imagen del producto es requerida',
+      })
+
           return;
       }
      if(producto.variantes.length == 0){
-        Alert.alert('Error', 'El producto debe tener al menos una variante.');
+        
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'El producto debe tener al menos una variante',
+      })
+
         return;
       }
 }

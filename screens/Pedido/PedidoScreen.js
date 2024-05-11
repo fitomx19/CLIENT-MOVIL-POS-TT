@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment-timezone';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Camera } from "expo-camera";
+import styles from './styles/PedidoScreen.style';
+import { ALERT_TYPE, Toast } from 'react-native-alert-notification';
 
 
 const PedidosAddScreen = ({ navigation }) => {
@@ -19,10 +21,16 @@ const PedidosAddScreen = ({ navigation }) => {
   const cameraRef = useRef(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false); 
+  
 
   const handleBarCodeScanned = ({ type, data }) => {
     setSearchQuery( data );
-    alert(`Se escaneo un código de barras tipo ${type} con el serial ${data}!`);
+ 
+    Toast.show({
+      type: ALERT_TYPE.SUCCESS,
+      title: 'Success',
+      textBody: ` Se escaneo un código de barras tipo ${type} con el serial ${data}!` ,
+    })
     setUserEscaner(false);
   };
 
@@ -77,12 +85,6 @@ const PedidosAddScreen = ({ navigation }) => {
     // Si no se encuentra en el nombre, buscar en el código de barras
     return codigoBarras.includes(searchQuery.toLowerCase());
 });
-
-
- 
-
- 
-
   useEffect(() => {
     const getCameraPermissions = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -140,57 +142,6 @@ const PedidosAddScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    marginBottom: 60, // Espacio para el componente Pagar
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 30,
-    marginBottom: 20,
-    marginTop: 10,
-  },
-   barCodeContainer : {
-         width: '100%',
-         height: '50%',
-    },
-  input: {
-    flex: 1,
-    height: 40,
-    borderColor: 'forestgreen',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 20,
-  },
-  icon: {
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  scrollContainer: {
-    flex: 1,
-  },
-  camera: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-    zIndex: -1, // Para colocar la cámara detrás del contenido
-  },
-  littlecamera : {
-    width: 50,
-    height: 50,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    top: 0,
-     
-  }
-});
+
 
 export default PedidosAddScreen;

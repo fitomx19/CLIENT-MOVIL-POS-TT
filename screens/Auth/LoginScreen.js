@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import handleLogin from './LoginScreenService';
 import styles from './LoginScreen.style';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ALERT_TYPE, Dialog,  Toast } from 'react-native-alert-notification';
 
 
 const LoginScreen = () => {
@@ -46,7 +47,12 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.error('Error en el inicio de sesión:', error.message);
-      Alert.alert('Error', 'Usuario o contraseña incorrectos');
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Usuario o contraseña incorrectos',
+        button: 'Cerrar',
+      })
     }
   };
 

@@ -6,6 +6,7 @@ import styles from "./RevisarPedidosDetalleScreen.style";
 import { Button } from "react-native-elements";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
 
 const RevisarPedidosDetalleScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -67,10 +68,23 @@ const RevisarPedidosDetalleScreen = ({ route }) => {
      
     await AsyncStorage.setItem('pedido_pago', JSON.stringify(detallePedido._id));
     if(pay){
-      alert('Pagaremos el pedido :' + detallePedido.identificador);
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Pedido',
+        textBody: `Pagaremos el pedido : + detallePedido.identificador`,
+        autoClose: 5000,
+      })
       navigation.navigate('PagoScreen');
     }else{
-      alert('Continuamos con el pedido ' +  detallePedido.identificador);
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Pedido',
+        textBody: `Continuaremos con el pedido : + detallePedido.identificador`,
+        autoClose: 5000,
+      })
+
+
+
       navigation.navigate('PedidosScreen');
     }
     

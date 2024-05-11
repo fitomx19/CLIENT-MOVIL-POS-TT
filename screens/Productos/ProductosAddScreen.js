@@ -8,6 +8,7 @@ import styles from './ProductosAddScreen.style';
 import { Button } from 'react-native-elements'; 
 import Icon from 'react-native-vector-icons/FontAwesome'; // Por ejemplo, para usar iconos de FontAwesome
 import Spinner from '../../globalComponents/Spinner';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 
 const ProductosAddScreen = ({ navigation }) => {
@@ -29,6 +30,9 @@ const ProductosAddScreen = ({ navigation }) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const [userEscaner, setUserEscaner] = useState(false); 
 
+ 
+
+
   useEffect(() => {
     const getCameraPermissions = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -40,7 +44,12 @@ const ProductosAddScreen = ({ navigation }) => {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setUpdatedProduct({ ...producto, codigo_barras: data });
-    alert(`Se escaneo un codigo de barras tipo ${type} con el serial ${data}!`);
+    Dialog.show({
+      type: ALERT_TYPE.SUCCESS,
+      title: 'Código de barras escaneado',
+      textBody: `Se escaneó un código de barras tipo ${type} con el serial ${data}!`,
+      button: 'Cerrar',
+    });
     setUserEscaner(false);
   };
 
@@ -80,9 +89,14 @@ const ProductosAddScreen = ({ navigation }) => {
         imagen: producto.imagen  
       }; 
       await createProduct(newProduct); 
-      Alert.alert('Producto agregado', 'La información del producto se ha agregado correctamente.', [
-        { text: 'OK', onPress: () => navigation.navigate('ProductScreen') },  
-      ]);
+      Dialog.show({
+                    type: ALERT_TYPE.SUCCESS,
+                    title: 'Producto creado con éxito',
+                    textBody: ('Te redirigiremos a la pantalla de productos.'),
+                    button: 'Aceptar',
+                    onPressButton: () => navigation.navigate('ProductScreen') ,
+                    autoClose: 1000,
+                  }),
 
       setPresionado(false);
 
@@ -97,7 +111,12 @@ const ProductosAddScreen = ({ navigation }) => {
       });
     } catch (error) {
       console.error('Error creating product:', error);
-      Alert.alert('Error', 'Ha ocurrido un error al agregar el producto.');
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'Ha ocurrido un error al agregar el producto.',
+        button: 'Cerrar',
+      });
     }
 
   };

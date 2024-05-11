@@ -1,7 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';  
+import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
+
 
 const FooterMenu = ({ navigation }) => {
   const handleLogout = async () => {
@@ -21,27 +24,32 @@ const FooterMenu = ({ navigation }) => {
   
   const handleCorteCaja = async () => {
     await AsyncStorage.removeItem('subpedido');
-    alert('Corte de caja realizado con éxito');
+    Toast.show({
+      type: ALERT_TYPE.SUCCESS,
+      title: 'Corte de caja',
+      textBody: 'Corte de caja realizado con éxito',
+      autoClose: 5000,
+    });
   };
 
   let data = [
     { 
-      key: 'RevisarPedidoHistoricoScreen', 
-      icon: 'list', 
+      key: 'Hitorial de Pedidos', 
+      icon: 'history', 
       action: () => navigation.navigate('RevisarPedidoHistoricoScreen'), 
       description: 'Revisar Historial de Pedidos' 
     },
     { 
-      key: 'Administrar Inventario', 
-      icon: 'list-alt', 
+      key: 'Productos', 
+      icon: 'archive', 
       action: () => navigation.navigate('ProductScreen'), 
       description: 'Administrar el inventario de productos' 
     },
     { 
-      key: 'Crear producto | Categoría', 
+      key: 'Crear producto', 
       icon: 'plus-square', 
       action: () => navigation.navigate('ProductosAddScreen'), 
-      description: 'Agregar un nuevo producto o categoría' 
+      description: 'Agregar un nuevo producto' 
     },
     
     { 

@@ -1,6 +1,8 @@
 import moment from 'moment-timezone';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createTicket , editTicket } from './CortePedidoScreenService'; 
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
+
 
 export const handlePayment = async (pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados) => {
     // Bloquea el botón de pago para evitar pagos múltiples
@@ -25,8 +27,7 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
       mesa,
       respuesta_api_face: resultados
     };
-
-    //validar que paymentMethod no sea vacio
+    
     if (paymentMethod ==  "") {
       alert('Selecciona un método de pago');
       setLoading(false); // Desbloquea el botón de pago
@@ -44,13 +45,10 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
       orderData.hora_fin = horaFinDate;
       const pedido_pago = await AsyncStorage.getItem('pedido_pago');
       console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
-      if(pedido_pago != null){
-        //eliminar la hora de inicio
-        delete orderData.hora_inicio;
-        //eliminar la hora de fin
+      if(pedido_pago != null){ 
+        delete orderData.hora_inicio; 
         delete orderData.hora_fin;
-        editTicket(orderData, pedido_pago);
-        //eliminar el pedido_pago
+        editTicket(orderData, pedido_pago); 
         await AsyncStorage.removeItem('pedido_pago');
       }else{
         console.log("🥶 vamos a crear el pedido " + orderData)
@@ -59,11 +57,21 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
       }
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
-      alert('Pedido realizado con éxito');
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Exito',
+        textBody: 'Pedido realizado con éxito',
+        button: 'Cerrar',
+      })
       navigation.navigate('MenuScreen');
     } catch (error) {
       console.error('Error al realizar el pedido:', error);
-      alert('Error al realizar el pedido');
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Error',
+        textBody: 'No se pudo realizar el pedido, intente de nuevo.',
+        button: 'Cerrar',
+      })
     } finally {
       setLoading(false); // Desbloquea el botón de pago después de completar la transacción
     }
@@ -73,16 +81,13 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
 export const handleSave = async (pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados) => {
     // Bloquea el botón de pago para evitar pagos múltiples
     setLoading(true);
-    console.log("🥶 vamos a guardar el pedido")
     const jsonPedido = pedido.map(item => ({
       producto: item.productoId,
       cantidad: item.cantidad,
       precio: item.precio_unitario,
       variante: item._id,
     }));
-    console.log("jsonPedido",jsonPedido)
     const tienda = await AsyncStorage.getItem('tienda');
-    console.log("tienda",tienda)
     const orderData = {
       id_tienda: tienda,
       pedido: jsonPedido,
@@ -104,17 +109,11 @@ export const handleSave = async (pedido,paymentMethod,estado,comments,referencia
       let horaFinDate = moment().tz('America/Mexico_City').format('YYYY-MM-DD HH:mm:ss')
       horaFinDate = moment(horaFinDate).toDate();
       orderData.hora_fin = horaFinDate;
-      console.log('Pedido a realizar:', orderData);
       const pedido_pago = await AsyncStorage.getItem('pedido_pago');
-      console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
-      if(pedido_pago != null){
-        //eliminar la hora de inicio
-        console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
-        delete orderData.hora_inicio;
-        //eliminar la hora de fin
+      if(pedido_pago != null){ 
+        delete orderData.hora_inicio; 
         delete orderData.hora_fin;
-        editTicket(orderData, pedido_pago);
-        //eliminar el pedido_pago
+        editTicket(orderData, pedido_pago); 
         await AsyncStorage.removeItem('pedido_pago');
       }else{
         console.log("🥶 vamos a crear el pedido " + orderData)
@@ -123,11 +122,26 @@ export const handleSave = async (pedido,paymentMethod,estado,comments,referencia
       }
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
-      alert('Pedido realizado con éxito');
+      
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Exito',
+        textBody: 'Pedido guardado con éxito',
+        button: 'Cerrar',
+      })
+
       navigation.navigate('MenuScreen');
     } catch (error) {
       console.error('Error al realizar el pedido:', error);
-      alert('Error al realizar el pedido');
+     
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Error',
+        textBody: 'No se pudo realizar el pedido, intente de nuevo.',
+        button: 'Cerrar',
+      })
+
+
     } finally {
       setLoading(false); 
     }

@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ListItem, Icon } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { pedidoDetalleStyles } from './styles/pedidoDetalleStyles';  
+import { ALERT_TYPE,  Toast } from 'react-native-alert-notification';
+
 
 const PedidoDetalleScreen = ({ route }) => {
   const { producto } = route.params;
@@ -23,7 +25,12 @@ const PedidoDetalleScreen = ({ route }) => {
         );
         setSubpedido(nuevoSubpedido);
       } else {
-        Alert.alert('No se puede agregar más de la cantidad disponible.');
+       Toast.show({
+
+          type: ALERT_TYPE.DANGER,
+          title: 'Error',
+          textBody: 'No hay existencias suficientes para este producto',
+        })
       }
     } else {
       // Agregar la información adicional al objeto de la variante
@@ -43,14 +50,24 @@ const PedidoDetalleScreen = ({ route }) => {
     // Validar que no haya ninguna cantidad igual a cero
     const cantidadCero = subpedido.some((item) => item.cantidad === 0);
     if (cantidadCero) {
-      Alert.alert('No se pueden agregar productos con cantidad cero.');
+
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: 'Error',
+        textBody: 'No puedes añadir productos con cantidad cero',
+      })
+
       return;
     }
 
     // Guardar el subpedido en AsyncStorage
     try {
       await AsyncStorage.setItem('subpedido', JSON.stringify(subpedido));
-      Alert.alert('Pedido añadido con éxito.');
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Success',
+        textBody: 'Producto añadido al pedido.',
+      })
       // Navegar a MenuScreen después de actualizar AsyncStorage
       navigation.navigate('PedidosScreen');
     } catch (error) {

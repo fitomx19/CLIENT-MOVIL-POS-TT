@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 
 
 const Total = ({total,setTotal}) => {
@@ -37,7 +37,14 @@ const Total = ({total,setTotal}) => {
       // Limpiar el subpedido en AsyncStorage
       await AsyncStorage.removeItem('subpedido');
       setTotal(0);
-      alert('Pedido  limpiado con éxito');
+    
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Éxito',
+        textBody: 'Subpedido limpiado con éxito',
+        autoClose: 5000,
+      });
+
     } catch (error) {
       console.error('Error al limpiar el LocalStorage:', error);
     }

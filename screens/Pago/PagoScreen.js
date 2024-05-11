@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de decodificación del JWT
 import moment from 'moment-timezone';
 import {styles } from './PagoScreen.style';
+import { ALERT_TYPE, Dialog  , Toast} from 'react-native-alert-notification';
+
 
 const PagoScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -63,7 +65,11 @@ const PagoScreen = ({ route }) => {
 
     //validar que paymentMethod no sea vacio
     if (paymentMethod ==  "") {
-      alert('Selecciona un método de pago');
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Error',
+        textBody: 'Selecciona un método de pago',
+      })
       setLoading(false); // Desbloquea el botón de pago
       return;
     }
@@ -93,11 +99,21 @@ const PagoScreen = ({ route }) => {
       await AsyncStorage.removeItem('hora_inicio');
       await AsyncStorage.removeItem('subpedido');
       await AsyncStorage.removeItem('pedido_pago');
-      alert('Pedido realizado con éxito');
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: 'Exito',
+        textBody: 'Pedido realizado con éxito',
+        button: 'Cerrar',
+      })
       navigation.navigate('MenuScreen');
     } catch (error) {
       console.error('Error al realizar el pedido:', error);
-      alert('Error al realizar el pedido');
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        title: 'Error',
+        textBody: 'No se pudo realizar el pedido, intente de nuevo.',
+        button: 'Cerrar',
+      })
     } finally {
       setLoading(false); // Desbloquea el botón de pago después de completar la transacción
     }

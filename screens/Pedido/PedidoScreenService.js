@@ -29,8 +29,6 @@ export const enviarImagen = async (uri) => {
 
 export const procesarImagenAsyncStorage = async (imagen) => {
     //identificador usuario
-    console.log('llego aqui:', imagen);
     datos = await enviarImagen(imagen);
-    console.log('Datos:', datos);
     return datos;
 }

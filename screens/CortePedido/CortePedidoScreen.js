@@ -8,7 +8,7 @@ import { decodeJwt } from '../../utils/jwtDecoder'; // Importa la función de de
 import {styles } from './CortePedidoScreen.style';
 import { Camera } from "expo-camera";
 import { enviarImagen, procesarImagenAsyncStorage } from '../Pedido/PedidoScreenService';
-
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification';
 
 const CortePedidoScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -26,7 +26,8 @@ const CortePedidoScreen = ({ route }) => {
   const [activeCamera, setActiveCamera] = useState(true);
   const [faceCoordinates, setFaceCoordinates] = useState(null);
   const [loadingCamera, setLoadingCamera] = useState(true);
-  const [resultados, setResultados] = useState(null); // Estado para almacenar los resultados de la detección de rostros
+  const [ foto, setFoto ] = useState(null);
+  const [resultados, setResultados] = useState(null); 
   
   const obtenerPedido = async () => {
     const subpedidoGuardado = await AsyncStorage.getItem('subpedido');
@@ -45,7 +46,6 @@ const CortePedidoScreen = ({ route }) => {
     let token = await AsyncStorage.getItem('token');
     const decoded = await decodeJwt(token);
     setDecodedToken(decoded);
-    console.log('Token decodificado:', decoded);
   };
 
 
@@ -65,12 +65,26 @@ const CortePedidoScreen = ({ route }) => {
       try {
         const { uri } = await cameraRef.current.takePictureAsync();
         setActiveCamera(false);
+        setFoto(uri);
         const imagen = await procesarImagenAsyncStorage(uri);
         setResultados(imagen);
         setLoadingCamera(false);
-        alert('Imagen capturada, el usuario esta: ' + imagen["emocion_predominante"] + " luces " +imagen["nivel_estres"]);
+        
+        Dialog.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: 'Exito',
+          textBody: `Emocion  predominante:  ${imagen["emocion_predominante"]}  ${imagen["nivel_estres"]}`,
+          autoClose: 2000,
+        })
+    
+
       } catch (error) {
-        alert('Error al capturar la imagen, rostro no detectado');
+        Dialog.show({
+          type: ALERT_TYPE.DANGER,
+          title: 'Error',
+          textBody: `Error al capturar la imagen: ${error.message}`,
+          autoClose: 2000,
+        })
         console.error('Error al capturar la imagen:', error);
       }
     }
@@ -109,7 +123,7 @@ const CortePedidoScreen = ({ route }) => {
           
         ) : null
       }
-      {faceCoordinates && ( // Mostrar la caja solo si hay coordenadas de rostro disponibles
+      {faceCoordinates && (  
             <View
               style={{
                 position: 'absolute',
@@ -118,7 +132,7 @@ const CortePedidoScreen = ({ route }) => {
                 width: faceCoordinates.size.width,
                 height: faceCoordinates.size.height,
                 borderWidth: 2,
-                borderColor: 'red',
+                borderColor: 'green',
                 borderRadius: 5,
                 opacity: 0.5,
               }}
@@ -168,14 +182,22 @@ const CortePedidoScreen = ({ route }) => {
       />
     </View>
     <View style={styles.mesaContainer}>
-      <Text style={styles.mesaText}>Mesa</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Mesa"
-        value={mesa}
-        onChangeText={text => setMesa(text)}
-      />
-    </View>
+  <Text style={styles.mesaText}>Mesa</Text>
+    <Picker
+      selectedValue={mesa}
+      style={styles.input}
+      onValueChange={(itemValue) => setMesa(itemValue)}
+    >
+      <Picker.Item label="1" value="1" />
+      <Picker.Item label="2" value="2" />
+      <Picker.Item label="3" value="3" />
+      <Picker.Item label="4" value="4" />
+      <Picker.Item label="5" value="5" />
+      <Picker.Item label="6" value="6" />
+      <Picker.Item label="7" value="7" />
+      <Picker.Item label="8" value="8" />
+    </Picker>
+  </View>
     <Text> Comentarios </Text>
       <TextInput
         style={styles.input}
@@ -184,11 +206,8 @@ const CortePedidoScreen = ({ route }) => {
         onChangeText={text => setComments(text)}
       />
 
-
-       
-      
         <TouchableOpacity onPress={ () => handlePayment(pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados)} style={styles.payButton} disabled={loading}>
-        {loading   ? (
+        {loading  || loadingCamera ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
           <Text style={styles.payButtonText}>Pagar</Text>
@@ -197,16 +216,13 @@ const CortePedidoScreen = ({ route }) => {
               
       
         <TouchableOpacity onPress={() => handleSave(pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados)} style={styles.guardarPedido} disabled={loading}>
-        {loading  ? (
+        {loading || loadingCamera ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
           <Text style={styles.payButtonText}>Guardar pedido</Text>
         )}
       </TouchableOpacity>
       
-
-     
-
     </ScrollView>
   );
 };

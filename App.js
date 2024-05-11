@@ -16,6 +16,8 @@ import RevisarPedidosScreen from './screens/Pedido/RevisarPedidosScreen';
 import RevisarPedidosDetalleScreen from './screens/Pedido/RevisarPedidosDetalleScreen';
 import CortePedidoScreen from './screens/CortePedido/CortePedidoScreen';
 import RevisarPedidoHistoricoScreen from './screens/PedidoHistorico/RevisarPedidoHistoricoScreen';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+
 
 const Stack = createStackNavigator();
 
@@ -23,7 +25,8 @@ export default function App  ()  {
   
  
   return (
-    <NavigationContainer>
+    <AlertNotificationRoot>
+      <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">
         <Stack.Screen name="LoginScreen" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="MenuScreen" component={MenuScreen}  options={{ 
@@ -47,6 +50,7 @@ export default function App  ()  {
 
       </Stack.Navigator>
     </NavigationContainer>
+    </AlertNotificationRoot>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Switch, TextInput, Pressable , StyleSheet, Alert } from 'react-native';
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 
 const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
   const [updatedProduct, setUpdatedProduct] = useState({
@@ -16,9 +17,16 @@ const ProductUpdateForm = ({ product, onUpdate, navigation }) => {
     // Aquí puedes realizar validaciones antes de enviar la actualización al servicio
     onUpdate(updatedProduct);
     //mostrar mensaje de actualización exitosa
-    Alert.alert('Producto actualizado', 'La información del producto se ha actualizado correctamente.', [
-      { text: 'OK', onPress: () => navigation.navigate('ProductScreen') }, // Navega hacia atrás al presionar OK
-    ]);
+    
+    Dialog.show({
+      type: ALERT_TYPE.SUCCESS,
+      title: 'Producto actualizado',
+      textBody: 'La información del producto se ha actualizado correctamente',
+      button: 'OK',
+      onPressButton: () => navigation.navigate('ProductScreen'),
+      autoClose: 5000,
+    });
+
   };
 
   return (
