@@ -63,8 +63,8 @@ const LoginScreen = () => {
       resizeMode="cover"
     >
       <View style={styles.overlay}>
-        <Text style={styles.titlePlus}>POS SYSTEM ++ </Text>
-        <Text style={styles.title}>Iniciar Sesión</Text>
+        <Text style={styles.titlePlus}>POS PLUS</Text>
+        
         <Text style={{color:"white"}}>Usuario</Text>
         <TextInput
           style={styles.input}
@@ -94,7 +94,7 @@ const LoginScreen = () => {
           <Text style={{color: 'white', marginLeft: 5}}>Recordar usuario</Text>
           
         </View>
-        <Text style={{color: 'white', fontSize:10}}>Version 0.5.0</Text>
+        <Text style={{color: 'white', fontSize:10}}>Version 0.6.0</Text>
       </View>
       
     </ImageBackground>

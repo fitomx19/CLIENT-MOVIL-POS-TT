@@ -25,6 +25,7 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
       cocina,
       total : total,
       mesa,
+      
       respuesta_api_face: resultados
     };
     
@@ -44,14 +45,12 @@ export const handlePayment = async (pedido,paymentMethod,comments,referencia,coc
       horaFinDate = moment(horaFinDate).toDate();
       orderData.hora_fin = horaFinDate;
       const pedido_pago = await AsyncStorage.getItem('pedido_pago');
-      console.log("🥶🥰  vamos a editar el pedido " + pedido_pago)
       if(pedido_pago != null){ 
         delete orderData.hora_inicio; 
         delete orderData.hora_fin;
         editTicket(orderData, pedido_pago); 
         await AsyncStorage.removeItem('pedido_pago');
       }else{
-        console.log("🥶 vamos a crear el pedido " + orderData)
         createTicket(orderData);
         await AsyncStorage.removeItem('pedido_pago');
       }
@@ -98,6 +97,7 @@ export const handleSave = async (pedido,paymentMethod,estado,comments,referencia
       cocina,
       total : total,
       mesa,
+      
       respuesta_api_face: resultados
     };
     console.log('Pedido JSON:', orderData);
@@ -116,7 +116,6 @@ export const handleSave = async (pedido,paymentMethod,estado,comments,referencia
         editTicket(orderData, pedido_pago); 
         await AsyncStorage.removeItem('pedido_pago');
       }else{
-        console.log("🥶 vamos a crear el pedido " + orderData)
         createTicket(orderData);
         await AsyncStorage.removeItem('pedido_pago');
       }

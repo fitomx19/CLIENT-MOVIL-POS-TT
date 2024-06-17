@@ -18,6 +18,7 @@ const CortePedidoScreen = ({ route }) => {
   const [comments, setComments] = useState('');
   const [referencia, setReferencia] = useState('');
   const [mesa, setMesa] = useState('');
+  const [comensales, setComensales] = useState('');
   const [estado, setEstado] = useState('preparando');
   const [cocina, setCocina] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null); // Estado para almacenar los datos decodificados del JWT
@@ -182,22 +183,39 @@ const CortePedidoScreen = ({ route }) => {
       />
     </View>
     <View style={styles.mesaContainer}>
-  <Text style={styles.mesaText}>Mesa</Text>
-    <Picker
-      selectedValue={mesa}
-      style={styles.input}
-      onValueChange={(itemValue) => setMesa(itemValue)}
-    >
-      <Picker.Item label="1" value="1" />
-      <Picker.Item label="2" value="2" />
-      <Picker.Item label="3" value="3" />
-      <Picker.Item label="4" value="4" />
-      <Picker.Item label="5" value="5" />
-      <Picker.Item label="6" value="6" />
-      <Picker.Item label="7" value="7" />
-      <Picker.Item label="8" value="8" />
-    </Picker>
-  </View>
+      <Text style={styles.mesaText}>Mesa</Text>
+      <Picker
+        selectedValue={mesa}
+        style={styles.input}
+        onValueChange={(itemValue) => setMesa(itemValue)}
+      >
+        <Picker.Item label="1" value="1" />
+        <Picker.Item label="2" value="2" />
+        <Picker.Item label="3" value="3" />
+        <Picker.Item label="4" value="4" />
+        <Picker.Item label="5" value="5" />
+        <Picker.Item label="6" value="6" />
+        <Picker.Item label="7" value="7" />
+        <Picker.Item label="8" value="8" />
+      </Picker>
+    </View>
+    <View style={styles.comensalesContainer}>
+      <Text style={styles.comensalesText}>Número Comensales</Text>
+      <Picker
+        selectedValue={comensales}
+        style={styles.input}
+        onValueChange={(itemValue) => setComensales(itemValue)}
+      >
+        <Picker.Item label="1" value="1" />
+        <Picker.Item label="2" value="2" />
+        <Picker.Item label="3" value="3" />
+        <Picker.Item label="4" value="4" />
+        <Picker.Item label="5" value="5" />
+        <Picker.Item label="6" value="6" />
+        <Picker.Item label="7" value="7" />
+        <Picker.Item label="8" value="8" />
+      </Picker>
+    </View>
     <Text> Comentarios </Text>
       <TextInput
         style={styles.input}
@@ -206,7 +224,7 @@ const CortePedidoScreen = ({ route }) => {
         onChangeText={text => setComments(text)}
       />
 
-        <TouchableOpacity onPress={ () => handlePayment(pedido,paymentMethod,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados)} style={styles.payButton} disabled={loading}>
+        <TouchableOpacity onPress={ () => handlePayment(pedido,paymentMethod,comments,referencia,cocina,total,mesa,comensales,setLoading,decodedToken,navigation,resultados)} style={styles.payButton} disabled={loading}>
         {loading  || loadingCamera ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
@@ -215,7 +233,7 @@ const CortePedidoScreen = ({ route }) => {
       </TouchableOpacity>
               
       
-        <TouchableOpacity onPress={() => handleSave(pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,setLoading,decodedToken,navigation,resultados)} style={styles.guardarPedido} disabled={loading}>
+        <TouchableOpacity onPress={() => handleSave(pedido,paymentMethod,estado,comments,referencia,cocina,total,mesa,comensales,setLoading,decodedToken,navigation,resultados)} style={styles.guardarPedido} disabled={loading}>
         {loading || loadingCamera ? (
           <ActivityIndicator size="small" color="#ffffff" />
         ) : (
